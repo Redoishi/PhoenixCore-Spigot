@@ -1,0 +1,6 @@
+name: ${name}
+version: ${project.version}
+main: ${mainClass}
+prefix: PC
+author: ${author}
+description: ${project.description}

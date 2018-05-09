@@ -1,0 +1,11 @@
+# config pour PhoenixCore
+
+# ne pas modifier la version
+version: 1.0
+
+
+# ---------------
+# Discord
+# ---------------
+discord: false
+id:
