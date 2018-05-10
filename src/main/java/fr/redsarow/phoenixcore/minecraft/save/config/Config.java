@@ -1,4 +1,4 @@
-package fr.redsarow.phoenixcore.minecraft.save.Config;
+package fr.redsarow.phoenixcore.minecraft.save.config;
 
 import fr.redsarow.phoenixcore.minecraft.PhoenixCore;
 import org.bukkit.configuration.file.FileConfiguration;
