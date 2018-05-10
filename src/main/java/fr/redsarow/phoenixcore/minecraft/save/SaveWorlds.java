@@ -1,6 +1,6 @@
 package fr.redsarow.phoenixcore.minecraft.save;
 
-import fr.redsarow.phoenixcore.minecraft.Group;
+import fr.redsarow.phoenixcore.minecraft.WorldGroup;
 import fr.redsarow.phoenixcore.minecraft.PhoenixCore;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -78,11 +78,11 @@ public class SaveWorlds {
         configFile = YamlConfiguration.loadConfiguration(file);
         if (configFile.getStringList(GROUP).isEmpty()) {
             setSectionVal(configFile, GROUP, new ArrayList<String>() {{
-                add("noGroup");
+                add("InitGroup");
             }});
             setSectionVal(
                     configFile,
-                    "noGroup." + WORLDS,
+                    "InitGroup." + WORLDS,
                     pl.getServer().getWorlds().stream().map(World::getName).collect(Collectors.toList())
             );
         }
@@ -96,32 +96,33 @@ public class SaveWorlds {
         }
     }
 
-    public void loadWorldofGroupe(String groupe) {
-        Group group = new Group(groupe);
-        if (configFile.get(groupe + "." + DEFAULT_TEAM) != null) {
-            Team team = PhoenixCore.TEAM_SCOREBOARD.registerNewTeam(groupe);
-            team.setColor(ChatColor.valueOf(configFile.getString(groupe + "." + DEFAULT_TEAM + "." + TEAM_COLOR)));
-            team.setPrefix(team.getColor() + configFile.getString(groupe + "." + DEFAULT_TEAM + "." + TEAM_PREFIX));
+    public void loadWorldofGroupe(String group) {
+        WorldGroup worldGroup = new WorldGroup(group);
+        if (configFile.get(group + "." + DEFAULT_TEAM) != null) {
+            Team team = PhoenixCore.TEAM_SCOREBOARD.registerNewTeam(group);
+            team.setColor(ChatColor.valueOf(configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_COLOR)));
+            team.setPrefix(team.getColor() + configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_PREFIX));
             team.setSuffix("" + ChatColor.RESET);
-            group.setTeam(team);
+            worldGroup.setTeam(team);
         }
 
         List<String> serverWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList());
 
-        configFile.getStringList(groupe + "." + WORLDS).forEach(s -> {
+        configFile.getStringList(group + "." + WORLDS).forEach(s -> {
             if(!serverWorlds.contains(s)){
                 //TODO to special class
                 WorldCreator wc = new WorldCreator(s);
                 wc.type(WorldType.NORMAL);
                 Bukkit.getServer().createWorld(wc);
             }
-            if (configFile.get(groupe + "." + TEAM + "." + s) != null) {
-                Team team = PhoenixCore.TEAM_SCOREBOARD.registerNewTeam(s);
-                team.setColor(ChatColor.valueOf(configFile.getString(groupe + "." + TEAM + "." + s + "." + TEAM_COLOR)));
-                team.setPrefix(team.getColor() + configFile.getString(groupe + "." + TEAM + "." + s + "." + TEAM_PREFIX));
+            Team team=null;
+            if (configFile.get(group + "." + TEAM + "." + s) != null) {
+                team = PhoenixCore.TEAM_SCOREBOARD.registerNewTeam(s);
+                team.setColor(ChatColor.valueOf(configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_COLOR)));
+                team.setPrefix(team.getColor() + configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_PREFIX));
                 team.setSuffix("" + ChatColor.RESET);
-                group.setWorldTeam(s, team);
             }
+            worldGroup.setWorldTeam(s, team);
         });
     }
 

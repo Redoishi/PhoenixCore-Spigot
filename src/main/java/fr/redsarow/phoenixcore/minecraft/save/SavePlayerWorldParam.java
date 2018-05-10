@@ -1,15 +1,16 @@
 package fr.redsarow.phoenixcore.minecraft.save;
 
+import fr.redsarow.phoenixcore.minecraft.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import static fr.redsarow.phoenixcore.minecraft.save.Save.*;
 
@@ -21,10 +22,19 @@ public class SavePlayerWorldParam {
 
     private static String FILE = "PlayerWorldParam.yml";
 
-    private List<String> SURVIE_WORLD;//TODO replace by group world
+    private final static String WORLD = "world";
+    private final static String X = "x";
+    private final static String Y = "y";
+    private final static String Z = "z";
+    private final static String INVENTORY = "inventory";
+    private final static String LIFE = "life";
+    private final static String FOOD = "food";
+    private final static String XP = "xp";
 
     private File dataFolder;
     private Plugin pl;
+    private File file;
+    private YamlConfiguration configFile;
 
 
     public SavePlayerWorldParam(JavaPlugin pl) throws IOException {
@@ -35,12 +45,19 @@ public class SavePlayerWorldParam {
         this.dataFolder = this.pl.getDataFolder();
 
         initFile(pl, dataFolder, FILE);
+
+        file = new File(this.dataFolder, FILE);
+        configFile = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void setLastWorldLocation(Player player) throws IOException {
-        File file = new File(this.dataFolder, FILE);
-        YamlConfiguration configFile = YamlConfiguration.loadConfiguration(file);
-
+    /**
+     * try by cmd for tp
+     *
+     * @param player
+     *
+     * @throws IOException
+     */
+    public void setLastWorldInformations(Player player) throws IOException {
         String pathConfig = player.getUniqueId().toString();
 
         if (!configFile.contains(pathConfig)) {
@@ -48,48 +65,77 @@ public class SavePlayerWorldParam {
         }
 
         World world = player.getWorld();
-        if (SURVIE_WORLD.contains(world.getName())) {
-            setSectionVal(configFile, pathConfig + ".lastWorldSurvie", world.getName());
-        }
+        WorldGroup worldGroup = WorldGroup.findWorldGroupByWorldName(world.getName());
+        //TODO test worldGroup == null ?
 
-        String pathLastWorld = pathConfig + "." + world.getName();
-        setSection(configFile, pathLastWorld);
-        setSectionVal(configFile, pathLastWorld + ".x", player.getLocation().getBlockX());
-        setSectionVal(configFile, pathLastWorld + ".y", player.getLocation().getBlockY());
-        setSectionVal(configFile, pathLastWorld + ".z", player.getLocation().getBlockZ());
+        String pathLastWorldGroup = pathConfig + "." + worldGroup.getName();
+
+        setSection(configFile, pathLastWorldGroup);
+        //set las world for this world group
+        setSectionVal(configFile, pathLastWorldGroup + "." + WORLD, world.getName());
+        setSectionVal(configFile, pathLastWorldGroup + "." + X, player.getLocation().getBlockX());
+        setSectionVal(configFile, pathLastWorldGroup + "." + Y, player.getLocation().getBlockY());
+        setSectionVal(configFile, pathLastWorldGroup + "." + Z, player.getLocation().getBlockZ());
+
+        //save inventory
+        ItemStack[] playerInventoryContents = player.getInventory().getContents();
+        setSectionVal(configFile, pathLastWorldGroup + "." + INVENTORY, SaveItemStackUtils.toString(playerInventoryContents));
+
+        //save life
+        setSectionVal(configFile, pathLastWorldGroup + "." + LIFE, player.getHealth());
+
+        //save food
+        setSectionVal(configFile, pathLastWorldGroup + "." + FOOD, player.getFoodLevel());
+
+        //save XP
+        setSectionVal(configFile, pathLastWorldGroup + "." + XP, player.getExp()+player.getLevel());
 
         configFile.save(file);
+        configFile = YamlConfiguration.loadConfiguration(file);
     }
 
-    public Location getLastWorldLocation(Player player, World lastWorld) {
-        File file = new File(this.dataFolder, FILE);
-        YamlConfiguration configFile = YamlConfiguration.loadConfiguration(file);
+    public Location getLastWorldLocation(Player player, String worldGroupName) {
+        String pathConfig = getDefaultPathConfig(player, worldGroupName);
 
-        String pathConfig = player.getUniqueId().toString();
+        String worldName = configFile.getString(pathConfig + "." + WORLD);
+        int x = configFile.getInt(pathConfig + "." + X);
+        int y = configFile.getInt(pathConfig + "." + Y);
+        int z = configFile.getInt(pathConfig + "." + Z);
 
-        String pathLastWorld = pathConfig + "." + lastWorld.getName();
-        int x = configFile.getInt(pathLastWorld + ".x");
-        int y = configFile.getInt(pathLastWorld + ".y");
-        int z = configFile.getInt(pathLastWorld + ".z");
-
-        return new Location(lastWorld, x, y, z);
+        return new Location(pl.getServer().getWorld(worldName), x, y, z);
     }
 
-    public boolean isLastWorldSurvie(Player player, String world) {
-        File file = new File(this.dataFolder, FILE);
-        YamlConfiguration configFile = YamlConfiguration.loadConfiguration(file);
+    public ItemStack[] getInventoriContent(Player player, String worldGroupName) {
+        String pathConfig = getDefaultPathConfig(player, worldGroupName);
 
-        String pathConfig = player.getUniqueId().toString() + ".lastWorldSurvie";
-
-        return configFile.getString(pathConfig).equals(world);
-
+        String stringItemStack = configFile.getString(pathConfig + "." + INVENTORY);
+        try {
+            return SaveItemStackUtils.toObject(stringItemStack);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public String getLastWorldSurvie(Player player) {
-        File file = new File(this.dataFolder, FILE);
-        YamlConfiguration configFile = YamlConfiguration.loadConfiguration(file);
+    public double getHealth(Player player, String worldGroupName){
+        String pathConfig = getDefaultPathConfig(player, worldGroupName);
+        return configFile.getDouble(pathConfig + "." + LIFE);
+    }
 
-        return configFile.getString(player.getUniqueId().toString() + ".lastWorldSurvie");
+    public int getFood(Player player, String worldGroupName){
+        String pathConfig = getDefaultPathConfig(player, worldGroupName);
+        return configFile.getInt(pathConfig + "." + FOOD);
+    }
+
+    public double getXp(Player player, String worldGroupName){
+        String pathConfig = getDefaultPathConfig(player, worldGroupName);
+        return configFile.getDouble(pathConfig + "." + XP);
+    }
+
+    private String getDefaultPathConfig(Player player,String worldGroupName){
+        WorldGroup worldGroup = WorldGroup.findWorldGroupByName(worldGroupName);
+        //TODO test worldGroup == null ?
+        return player.getUniqueId().toString() + "." + worldGroup.getName();
     }
 
     private void addPlayer(YamlConfiguration configFile, Player player) {
