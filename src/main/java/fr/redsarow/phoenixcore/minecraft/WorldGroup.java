@@ -8,25 +8,38 @@ import java.util.*;
  * @author redsarow
  * @since 1.0
  */
-public class Group {
+public class WorldGroup {
 
-    public final static List<Group> GROUPS = new ArrayList<>();
+    public final static List<WorldGroup> GROUPS = new ArrayList<>();
 
     private String name;
     private Team team;
     private Map<String, Team> worlds;
 
-    public Group(String name) {
+    public WorldGroup(String name) {
         this.name = name;
         worlds= new HashMap<>();
+        GROUPS.add(this);
     }
 
     /**
      * @return group or null
      */
-    public static Group findWorld(String worldName){
-        for (Group group : GROUPS) {
+    public static WorldGroup findWorldGroupByWorldName(String worldName){
+        for (WorldGroup group : GROUPS) {
             if (group.getWorlds().contains(worldName)) {
+                return group;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return group or null
+     */
+    public static WorldGroup findWorldGroupByName(String worldGroupName){
+        for (WorldGroup group : GROUPS) {
+            if (group.getName().equalsIgnoreCase(worldGroupName)) {
                 return group;
             }
         }
