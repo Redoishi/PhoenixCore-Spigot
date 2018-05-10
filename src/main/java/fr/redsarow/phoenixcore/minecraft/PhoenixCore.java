@@ -1,5 +1,6 @@
 package fr.redsarow.phoenixcore.minecraft;
 
+import fr.redsarow.phoenixcore.minecraft.cmd.testCmd;
 import fr.redsarow.phoenixcore.minecraft.listener.Join;
 import fr.redsarow.phoenixcore.minecraft.listener.Leave;
 import fr.redsarow.phoenixcore.minecraft.save.Config.Config;
@@ -39,12 +40,13 @@ public final class PhoenixCore extends JavaPlugin {
             GetConfig config = new GetConfig(this);
 
 
-            getLogger().info("init playerWorldParam");
-            SavePlayerWorldParam playerWorldParam = new SavePlayerWorldParam(this);
-
             getLogger().info("init SaveWorlds");
             SaveWorlds SaveWorlds = new SaveWorlds(this);
             SaveWorlds.loadWorlds();
+
+            getLogger().info("init playerWorldParam");
+            SavePlayerWorldParam playerWorldParam = new SavePlayerWorldParam(this);
+
 
             //event
             getLogger().info("init Listener");
@@ -59,6 +61,9 @@ public final class PhoenixCore extends JavaPlugin {
             f = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             f.setAccessible(true);
             CommandMap commandMap = (CommandMap) f.get(Bukkit.getServer());
+
+            //TODO rm
+            new testCmd(this, commandMap);
 
 //            new TpMap(this, "tpMap", commandMap);
 //            new TimeSet(this, "timeSet", commandMap);
