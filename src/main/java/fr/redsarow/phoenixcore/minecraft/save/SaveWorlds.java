@@ -19,31 +19,33 @@ import static fr.redsarow.phoenixcore.minecraft.save.Save.setSectionVal;
 
 /**
  * File:
- * <p>
- * Group:<br>
- * - noGgrou<br>
- * - G1<br>
- * - G2<br>
- * noGgrou:<br>
- * Worlds:<br>
- * - W1<br>
- * - W2<br>
- * DefaultTeam:<br>
- * color:<br>
- * prefix:<br>
- * G1:<br>
- * Worlds:<br>
- * - W1<br>
- * - W2<br>
- * Team:<br>
- * W1:<br>
- * color:<br>
- * prefix:<br>
- * G2:<br>
- * Worlds:<br>
- * - W1<br>
- * - W2<br>
- * </p>
+ * <pre>
+ * {@code
+ * Group:
+ *   - noGgrou
+ *   - G1
+ *   - G2
+ * noGgrou:
+ *   Worlds:
+ *     - W1
+ *     - W2
+ *   DefaultTeam:
+ *     color:
+ *     prefix:
+ * G1:
+ *   Worlds:
+ *     - W1
+ *     - W2
+ *   Team:
+ *     W1:
+ *       color:
+ *       prefix:
+ * G2:
+ *   Worlds:
+ *     - W1
+ *     - W2
+ * }
+ * </pre>
  * for color see {@link org.bukkit.ChatColor}
  *
  * @author redsarow
