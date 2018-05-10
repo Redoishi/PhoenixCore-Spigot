@@ -1,7 +1,7 @@
 package fr.redsarow.phoenixcore.minecraft.listener;
 
-import fr.redsarow.phoenixcore.minecraft.Group;
 import fr.redsarow.phoenixcore.minecraft.PhoenixCore;
+import fr.redsarow.phoenixcore.minecraft.WorldGroup;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,10 +25,15 @@ public class Join implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String worldName = player.getWorld().getName();
-        player.sendMessage("Connecter sur " + ChatColor.AQUA + worldName);
-        Group group = Group.findWorld(worldName);
-        if(group!= null){
-            Team team = group.getTeamForWorld(worldName);
+        WorldGroup group = WorldGroup.findWorldGroupByWorldName(worldName);
+        if (group == null) {
+            player.sendMessage(ChatColor.RED+"Une erreur est survenue contacter Redsarow");
+            return;
+        }
+        player.sendMessage("Connecter sur " + ChatColor.AQUA + worldName + ChatColor.RESET
+                + " du groupe " + ChatColor.AQUA + group.getName());
+        Team team = group.getTeamForWorld(worldName);
+        if(team != null){
             team.addEntry(player.getName());
         }
     }

@@ -23,6 +23,8 @@ public class Leave implements Listener {
     public void onLeave(PlayerQuitEvent event){
         Player player = event.getPlayer();
         Team team = PhoenixCore.TEAM_SCOREBOARD.getTeam(player.getWorld().getName());
-        team.removeEntry(player.getName());
+        if(team!=null){
+            team.removeEntry(player.getName());
+        }
     }
 }
