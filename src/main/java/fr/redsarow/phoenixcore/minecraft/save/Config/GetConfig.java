@@ -16,4 +16,8 @@ public class GetConfig {
         this.plugin = plugin;
         this.conf = this.plugin.getConfig();
     }
+
+    public Object getVal(String path){
+        return conf.get(path);
+    }
 }
