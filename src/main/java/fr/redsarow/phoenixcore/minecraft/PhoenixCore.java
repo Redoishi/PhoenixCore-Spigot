@@ -1,10 +1,10 @@
 package fr.redsarow.phoenixcore.minecraft;
 
-import fr.redsarow.phoenixcore.minecraft.cmd.testCmd;
+import fr.redsarow.phoenixcore.minecraft.cmd.TpMap;
 import fr.redsarow.phoenixcore.minecraft.listener.Join;
 import fr.redsarow.phoenixcore.minecraft.listener.Leave;
-import fr.redsarow.phoenixcore.minecraft.save.Config.Config;
-import fr.redsarow.phoenixcore.minecraft.save.Config.GetConfig;
+import fr.redsarow.phoenixcore.minecraft.save.config.Config;
+import fr.redsarow.phoenixcore.minecraft.save.config.GetConfig;
 import fr.redsarow.phoenixcore.minecraft.save.SavePlayerWorldParam;
 import fr.redsarow.phoenixcore.minecraft.save.SaveWorlds;
 import org.bukkit.Bukkit;
@@ -62,10 +62,7 @@ public final class PhoenixCore extends JavaPlugin {
             f.setAccessible(true);
             CommandMap commandMap = (CommandMap) f.get(Bukkit.getServer());
 
-            //TODO rm
-            new testCmd(this, commandMap);
-
-//            new TpMap(this, "tpMap", commandMap);
+            new TpMap(this, commandMap, playerWorldParam);
 //            new TimeSet(this, "timeSet", commandMap);
 
         } catch (Exception ex) {

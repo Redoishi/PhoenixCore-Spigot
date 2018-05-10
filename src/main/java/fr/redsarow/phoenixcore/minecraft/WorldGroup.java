@@ -3,6 +3,7 @@ package fr.redsarow.phoenixcore.minecraft;
 import org.bukkit.scoreboard.Team;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author redsarow
@@ -44,6 +45,13 @@ public class WorldGroup {
             }
         }
         return null;
+    }
+
+    /**
+     * @return list of group name
+     */
+    public static List<String> getListNameGroups(){
+        return GROUPS.stream().map(WorldGroup::getName).collect(Collectors.toList());
     }
 
     //<editor-fold desc="set">
