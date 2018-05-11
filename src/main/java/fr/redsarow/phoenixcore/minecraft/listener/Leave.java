@@ -1,6 +1,6 @@
 package fr.redsarow.phoenixcore.minecraft.listener;
 
-import fr.redsarow.phoenixcore.minecraft.PhoenixCore;
+import fr.redsarow.phoenixcore.PhoenixCore;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -20,4 +20,12 @@ public class GetConfig {
     public Object getVal(String path){
         return conf.get(path);
     }
+
+    public String getStringVal(String path){
+        return conf.getString(path);
+    }
+
+    public Boolean getBoolVal(String path){
+        return conf.getBoolean(path);
+    }
 }

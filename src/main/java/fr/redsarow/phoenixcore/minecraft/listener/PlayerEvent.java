@@ -1,6 +1,6 @@
 package fr.redsarow.phoenixcore.minecraft.listener;
 
-import fr.redsarow.phoenixcore.minecraft.PhoenixCore;
+import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.minecraft.WorldGroup;
 import fr.redsarow.phoenixcore.minecraft.util.Color;
 import org.bukkit.entity.Player;

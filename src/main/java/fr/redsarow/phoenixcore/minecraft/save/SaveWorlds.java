@@ -1,7 +1,7 @@
 package fr.redsarow.phoenixcore.minecraft.save;
 
+import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.minecraft.WorldGroup;
-import fr.redsarow.phoenixcore.minecraft.PhoenixCore;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -102,8 +102,13 @@ public class SaveWorlds {
         WorldGroup worldGroup = new WorldGroup(group);
         if (configFile.get(group + "." + DEFAULT_TEAM) != null) {
             Team team = PhoenixCore.TEAM_SCOREBOARD.registerNewTeam(group);
-            team.setColor(ChatColor.valueOf(configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_COLOR)));
-            team.setPrefix(team.getColor() + configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_PREFIX));
+
+            ChatColor chatColor = ChatColor.valueOf(configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_COLOR));
+//            pl.getLogger().info(chatColor.getClass() + "");
+//            pl.getLogger().info(chatColor + "");
+//            team.setColor(chatColor == null ? ChatColor.RESET : chatColor);//TODO bug color
+
+            team.setPrefix(chatColor + configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_PREFIX));
             team.setSuffix("" + ChatColor.RESET);
             worldGroup.setTeam(team);
         }
@@ -111,17 +116,20 @@ public class SaveWorlds {
         List<String> serverWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList());
 
         configFile.getStringList(group + "." + WORLDS).forEach(s -> {
-            if(!serverWorlds.contains(s)){
+            if (!serverWorlds.contains(s)) {
                 //TODO to special class
                 WorldCreator wc = new WorldCreator(s);
                 wc.type(WorldType.NORMAL);
                 Bukkit.getServer().createWorld(wc);
             }
-            Team team=null;
+            Team team = null;
             if (configFile.get(group + "." + TEAM + "." + s) != null) {
                 team = PhoenixCore.TEAM_SCOREBOARD.registerNewTeam(s);
-                team.setColor(ChatColor.valueOf(configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_COLOR)));
-                team.setPrefix(team.getColor() + configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_PREFIX));
+
+                ChatColor chatColor = ChatColor.valueOf(configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_COLOR));
+
+//                team.setColor(ChatColor.valueOf(configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_COLOR)));
+                team.setPrefix(chatColor + configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_PREFIX));
                 team.setSuffix("" + ChatColor.RESET);
             }
             worldGroup.setWorldTeam(s, team);

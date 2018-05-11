@@ -1,5 +1,6 @@
-package fr.redsarow.phoenixcore.minecraft;
+package fr.redsarow.phoenixcore;
 
+import fr.redsarow.phoenixcore.discord.Bot;
 import fr.redsarow.phoenixcore.minecraft.cmd.TpMap;
 import fr.redsarow.phoenixcore.minecraft.listener.Join;
 import fr.redsarow.phoenixcore.minecraft.listener.Leave;
@@ -23,6 +24,7 @@ public final class PhoenixCore extends JavaPlugin {
 
     public final static double VERS_CONFIG = 1.0;
     public static Scoreboard TEAM_SCOREBOARD;
+    public static GetConfig CONFIG;
 
     @Override
     public void onEnable() {
@@ -37,7 +39,7 @@ public final class PhoenixCore extends JavaPlugin {
                 return;
             }
             getLogger().info("get config");
-            GetConfig config = new GetConfig(this);
+            CONFIG = new GetConfig(this);
 
 
             getLogger().info("init SaveWorlds");
@@ -65,9 +67,14 @@ public final class PhoenixCore extends JavaPlugin {
             new TpMap(this, commandMap, playerWorldParam);
 //            new TimeSet(this, "timeSet", commandMap);
 
+            if(CONFIG.getBoolVal("discord")){
+                getLogger().info("init discord Bot");
+                new Bot(this);
+            }
+
         } catch (Exception ex) {
             getLogger().severe(ex.getLocalizedMessage());
-            onDisable();
+            this.getPluginLoader().disablePlugin(this);
         }
     }
 

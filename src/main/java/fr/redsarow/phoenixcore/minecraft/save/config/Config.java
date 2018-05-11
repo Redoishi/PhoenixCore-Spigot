@@ -1,6 +1,6 @@
 package fr.redsarow.phoenixcore.minecraft.save.config;
 
-import fr.redsarow.phoenixcore.minecraft.PhoenixCore;
+import fr.redsarow.phoenixcore.PhoenixCore;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 

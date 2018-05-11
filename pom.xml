@@ -15,7 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <author>redsarow</author>
-        <mainClass>fr.redsarow.phoenixcore.minecraft.PhoenixCore</mainClass>
+        <mainClass>fr.redsarow.phoenixcore.PhoenixCore</mainClass>
     </properties>
 
     <licenses>
@@ -81,6 +81,7 @@
                 <excludes>
                     <exclude>**/*.java</exclude>
                     <exclude>plugin.yml</exclude>
+                    <exclude>META-INF/</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -93,6 +94,23 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <finalName>${name}-${version}</finalName>
+                    <archive>
+                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>

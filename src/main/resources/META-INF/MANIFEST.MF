@@ -1,0 +1,2 @@
+Built-By: redsarow
+Class-Path: ./PhoenixCore/Discord4j.jar
