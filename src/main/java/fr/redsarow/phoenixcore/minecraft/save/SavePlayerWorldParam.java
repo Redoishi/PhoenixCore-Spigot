@@ -11,8 +11,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import static fr.redsarow.phoenixcore.minecraft.save.Save.*;
+import static fr.redsarow.phoenixcore.minecraft.save.Save.setSectionVal;
 
 /**
  * @author redsarow
@@ -30,6 +32,7 @@ public class SavePlayerWorldParam {
     private final static String LIFE = "life";
     private final static String FOOD = "food";
     private final static String XP = "xp";
+    private final static String SPAWN = "spawn";
 
     private File dataFolder;
     private Plugin pl;
@@ -73,13 +76,13 @@ public class SavePlayerWorldParam {
         setSection(configFile, pathLastWorldGroup);
         //set las world for this world group
         setSectionVal(configFile, pathLastWorldGroup + "." + WORLD, world.getName());
-        setSectionVal(configFile, pathLastWorldGroup + "." + X, player.getLocation().getBlockX());
-        setSectionVal(configFile, pathLastWorldGroup + "." + Y, player.getLocation().getBlockY());
-        setSectionVal(configFile, pathLastWorldGroup + "." + Z, player.getLocation().getBlockZ());
+        setSectionVal(configFile, pathLastWorldGroup + "." + X, player.getLocation().getX());
+        setSectionVal(configFile, pathLastWorldGroup + "." + Y, player.getLocation().getY());
+        setSectionVal(configFile, pathLastWorldGroup + "." + Z, player.getLocation().getZ());
 
         //save inventory
         ItemStack[] playerInventoryContents = player.getInventory().getContents();
-        setSectionVal(configFile, pathLastWorldGroup + "." + INVENTORY, SaveItemStackUtils.toString(playerInventoryContents));
+        setSectionVal(configFile, pathLastWorldGroup + "." + INVENTORY, UtilsSaveItemStack.toString(playerInventoryContents));
 
         //save life
         setSectionVal(configFile, pathLastWorldGroup + "." + LIFE, player.getHealth());
@@ -88,7 +91,21 @@ public class SavePlayerWorldParam {
         setSectionVal(configFile, pathLastWorldGroup + "." + FOOD, player.getFoodLevel());
 
         //save XP
-        setSectionVal(configFile, pathLastWorldGroup + "." + XP, player.getExp()+player.getLevel());
+        setSectionVal(configFile, pathLastWorldGroup + "." + XP, player.getExp() + player.getLevel());
+
+        //save spawn
+        Location bedSpawnLocation = player.getBedSpawnLocation();
+        pl.getLogger().info("Save bedSpawnLocation == null : "+ (bedSpawnLocation==null));
+        if(bedSpawnLocation!=null){
+            pl.getLogger().info("Save "+bedSpawnLocation.toString());
+        }
+        if (bedSpawnLocation != null) {
+            setSection(configFile, pathLastWorldGroup + "." + SPAWN);
+            setSectionVal(configFile, pathLastWorldGroup + "." + SPAWN + "." + WORLD, bedSpawnLocation.getWorld().getName());
+            setSectionVal(configFile, pathLastWorldGroup + "." + SPAWN + "." + X, bedSpawnLocation.getX());
+            setSectionVal(configFile, pathLastWorldGroup + "." + SPAWN + "." + Y, bedSpawnLocation.getY());
+            setSectionVal(configFile, pathLastWorldGroup + "." + SPAWN + "." + Z, bedSpawnLocation.getZ());
+        }
 
         configFile.save(file);
         configFile = YamlConfiguration.loadConfiguration(file);
@@ -97,10 +114,15 @@ public class SavePlayerWorldParam {
     public Location getLastWorldLocation(Player player, String worldGroupName) {
         String pathConfig = getDefaultPathConfig(player, worldGroupName);
 
-        String worldName = configFile.getString(pathConfig + "." + WORLD);
-        int x = configFile.getInt(pathConfig + "." + X);
-        int y = configFile.getInt(pathConfig + "." + Y);
-        int z = configFile.getInt(pathConfig + "." + Z);
+        String targetWorld = configFile.getString(pathConfig + "." + WORLD);
+        if (targetWorld == null) {
+            WorldGroup worldGroup = WorldGroup.findWorldGroupByName(worldGroupName);
+            targetWorld = worldGroup.getWorlds().iterator().next();
+        }
+        String worldName = targetWorld;
+        double x = configFile.getDouble(pathConfig + "." + X);
+        double y = configFile.getDouble(pathConfig + "." + Y);
+        double z = configFile.getDouble(pathConfig + "." + Z);
 
         return new Location(pl.getServer().getWorld(worldName), x, y, z);
     }
@@ -110,29 +132,44 @@ public class SavePlayerWorldParam {
 
         String stringItemStack = configFile.getString(pathConfig + "." + INVENTORY);
         try {
-            return SaveItemStackUtils.toObject(stringItemStack);
+            return UtilsSaveItemStack.toObject(stringItemStack);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public double getHealth(Player player, String worldGroupName){
+    public double getHealth(Player player, String worldGroupName) {
         String pathConfig = getDefaultPathConfig(player, worldGroupName);
-        return configFile.getDouble(pathConfig + "." + LIFE);
+        return configFile.getDouble(pathConfig + "." + LIFE, 20);
     }
 
-    public int getFood(Player player, String worldGroupName){
+    public int getFood(Player player, String worldGroupName) {
         String pathConfig = getDefaultPathConfig(player, worldGroupName);
-        return configFile.getInt(pathConfig + "." + FOOD);
+        return configFile.getInt(pathConfig + "." + FOOD, 20);
     }
 
-    public double getXp(Player player, String worldGroupName){
+    public double getXp(Player player, String worldGroupName) {
         String pathConfig = getDefaultPathConfig(player, worldGroupName);
-        return configFile.getDouble(pathConfig + "." + XP);
+        return configFile.getDouble(pathConfig + "." + XP, 0);
     }
 
-    private String getDefaultPathConfig(Player player,String worldGroupName){
+    public Location getLastBedSpawnLocation(Player player, String worldGroupName) {
+        String pathConfig = getDefaultPathConfig(player, worldGroupName);
+
+        if(configFile.getString(pathConfig + "." + SPAWN)==null){
+            return null;
+        }
+
+        String worldName = configFile.getString(pathConfig + "." + SPAWN + "." + WORLD);
+        double x = configFile.getDouble(pathConfig + "." + SPAWN + "." + X);
+        double y = configFile.getDouble(pathConfig + "." + SPAWN + "." + Y);
+        double z = configFile.getDouble(pathConfig + "." + SPAWN + "." + Z);
+
+        return new Location(pl.getServer().getWorld(worldName), x, y, z);
+    }
+
+    private String getDefaultPathConfig(Player player, String worldGroupName) {
         WorldGroup worldGroup = WorldGroup.findWorldGroupByName(worldGroupName);
         //TODO test worldGroup == null ?
         return player.getUniqueId().toString() + "." + worldGroup.getName();
@@ -144,5 +181,17 @@ public class SavePlayerWorldParam {
         setSection(configFile, pathConfig);
 
         setSectionVal(configFile, pathConfig + ".name", player.getName());
+    }
+
+    public void rmGroup(String targetWorldGroup) {
+        Set<String> player = configFile.getKeys(false);
+        player.forEach(s -> {
+            setSectionVal(configFile, s+"."+targetWorldGroup, null);
+        });
+        try {
+            configFile.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

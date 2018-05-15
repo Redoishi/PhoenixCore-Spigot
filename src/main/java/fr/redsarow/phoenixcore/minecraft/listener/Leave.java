@@ -15,14 +15,14 @@ public class Leave implements Listener {
 
     PhoenixCore pl;
 
-    public Leave(PhoenixCore PhoenixCore) {
-        this.pl = PhoenixCore;
+    public Leave(PhoenixCore phoenixCore) {
+        this.pl = phoenixCore;
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event){
         Player player = event.getPlayer();
-        Team team = PhoenixCore.TEAM_SCOREBOARD.getTeam(player.getWorld().getName());
+        Team team = pl.DEFAULT_PLUGIN_SCOREBOARD.getTeam(player.getWorld().getName());
         if(team!=null){
             team.removeEntry(player.getName());
         }

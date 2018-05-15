@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author redsarow
  * @since 1.0
  */
-public class SaveItemStackUtils {
+public class UtilsSaveItemStack {
 
 
     public static String toString(ItemStack[] itemStacks) {
@@ -35,6 +35,9 @@ public class SaveItemStackUtils {
     }
 
     public static ItemStack[] toObject(String data) throws IOException {
+        if(data==null){
+            return new ItemStack[0];
+        }
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);

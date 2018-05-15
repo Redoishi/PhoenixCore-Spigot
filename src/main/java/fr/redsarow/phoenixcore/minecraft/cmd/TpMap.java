@@ -1,10 +1,11 @@
 package fr.redsarow.phoenixcore.minecraft.cmd;
 
-import fr.redsarow.phoenixcore.minecraft.PhoenixCore;
+import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.minecraft.WorldGroup;
 import fr.redsarow.phoenixcore.minecraft.save.SavePlayerWorldParam;
 import fr.redsarow.phoenixcore.minecraft.util.Color;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -74,8 +75,6 @@ public class TpMap extends AMyCommand {
             return true;
         }
 
-        setPlayerParam(player, targetWorldGroup);
-
         Location targetWorldLocation =
                 playerWorldParam.getLastWorldLocation(
                         player,
@@ -84,12 +83,7 @@ public class TpMap extends AMyCommand {
         player.sendMessage("Tp sur " + Color.INFO + targetWorldGroup + ChatColor.RESET);
         player.teleport(targetWorldLocation);
 
-        //TODO gm
-//        if (DEFAULT_WORLD.contains(targetWorld) && player.getGameMode() != GameMode.SPECTATOR) {
-//            player.setGameMode(GameMode.SURVIVAL);
-//        } else if (player.getGameMode() != GameMode.SPECTATOR) {
-//            player.setGameMode(GameMode.CREATIVE);
-//        }
+        setPlayerParam(player, targetWorldGroup);
 
         return true;
     }
@@ -105,6 +99,22 @@ public class TpMap extends AMyCommand {
         int lvl = (int) RealLvl;
         player.setLevel(lvl);
         player.setExp(xp);
+
+        Location BedSpawnLocation = playerWorldParam.getLastBedSpawnLocation(player, targetWorldGroup);
+
+        getPlugin().getLogger().info("BedSpawnLocation == null : "+ (BedSpawnLocation==null));
+        if(BedSpawnLocation!=null){
+            getPlugin().getLogger().info(BedSpawnLocation.toString());
+        }
+        player.setBedSpawnLocation(BedSpawnLocation);//TODO bug
+
+        if(player.getGameMode() != GameMode.SPECTATOR){
+            WorldGroup worldGroup = WorldGroup.findWorldGroupByName(targetWorldGroup);
+            GameMode gameMode = worldGroup.getGameMode();
+            if(gameMode!= null){
+                player.setGameMode(gameMode);
+            }
+        }
     }
 
 }

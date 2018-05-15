@@ -15,15 +15,13 @@ public abstract class Save {
     protected static void initFile(JavaPlugin pl, File dataFolder, String fileName) throws IOException {
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
-            pl.getLogger().info("creation dosier "+dataFolder);
+            pl.getLogger().info("creation dossier: "+dataFolder);
         }
-
-        pl.getLogger().info("dataFolder: " + dataFolder);
 
         File file = new File(dataFolder, fileName);
         if (!file.exists()) {
             file.createNewFile();
-            pl.getLogger().info("creation fichier "+fileName);
+            pl.getLogger().info("creation fichier: "+fileName);
         }
     }
 

@@ -4,8 +4,6 @@ import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.minecraft.WorldGroup;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 
 import java.io.File;
@@ -22,13 +20,16 @@ import static fr.redsarow.phoenixcore.minecraft.save.Save.setSectionVal;
  * <pre>
  * {@code
  * Group:
- *   - noGgrou
+ *   - InitGroup
  *   - G1
  *   - G2
- * noGgrou:
+ * InitGroup:
  *   Worlds:
  *     - W1
  *     - W2
+ *   gameMode: SURVIVAL
+ *   scoreboard: true
+ *   deadCount: true
  *   DefaultTeam:
  *     color:
  *     prefix:
@@ -36,6 +37,8 @@ import static fr.redsarow.phoenixcore.minecraft.save.Save.setSectionVal;
  *   Worlds:
  *     - W1
  *     - W2
+ *   scoreboard: true
+ *   deadCount: false
  *   Team:
  *     W1:
  *       color:
@@ -44,9 +47,12 @@ import static fr.redsarow.phoenixcore.minecraft.save.Save.setSectionVal;
  *   Worlds:
  *     - W1
  *     - W2
+ *   scoreboard: false
+ *   deadCount: false
  * }
  * </pre>
  * for color see {@link org.bukkit.ChatColor}
+ * for gameMode see {@link org.bukkit.GameMode}
  *
  * @author redsarow
  * @since 1.0
@@ -60,13 +66,16 @@ public class SaveWorlds {
     private final static String TEAM = "Team";
     private final static String TEAM_COLOR = "color";
     private final static String TEAM_PREFIX = "prefix";
+    private final static String SCOREBOARD = "scoreboard";
+    private final static String DEAD_COUNT = "deadCount";
+    private final static String GAME_MODE = "gameMode";
 
     private File dataFolder;
     private File file;
-    private Plugin pl;
+    private PhoenixCore pl;
     private YamlConfiguration configFile;
 
-    public SaveWorlds(JavaPlugin pl) throws IOException {
+    public SaveWorlds(PhoenixCore pl) throws IOException {
 
         this.pl = pl;
         this.pl.getLogger().info("save " + FILE);
@@ -101,17 +110,21 @@ public class SaveWorlds {
     public void loadWorldofGroupe(String group) {
         WorldGroup worldGroup = new WorldGroup(group);
         if (configFile.get(group + "." + DEFAULT_TEAM) != null) {
-            Team team = PhoenixCore.TEAM_SCOREBOARD.registerNewTeam(group);
+            Team team = pl.DEFAULT_PLUGIN_SCOREBOARD.registerNewTeam(group);
 
             ChatColor chatColor = ChatColor.valueOf(configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_COLOR));
 //            pl.getLogger().info(chatColor.getClass() + "");
 //            pl.getLogger().info(chatColor + "");
 //            team.setColor(chatColor == null ? ChatColor.RESET : chatColor);//TODO bug color
 
-            team.setPrefix(chatColor + configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_PREFIX));
+            team.setPrefix(chatColor + configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_PREFIX, "") + " ");
             team.setSuffix("" + ChatColor.RESET);
             worldGroup.setTeam(team);
         }
+
+        worldGroup.setScoreboard(configFile.getBoolean(group + "." + SCOREBOARD));
+        worldGroup.setDeadCount(configFile.getBoolean(group + "." + DEAD_COUNT));
+        worldGroup.setGameMode(configFile.getString(group + "." + GAME_MODE));
 
         List<String> serverWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList());
 
@@ -124,16 +137,29 @@ public class SaveWorlds {
             }
             Team team = null;
             if (configFile.get(group + "." + TEAM + "." + s) != null) {
-                team = PhoenixCore.TEAM_SCOREBOARD.registerNewTeam(s);
+                team = pl.DEFAULT_PLUGIN_SCOREBOARD.registerNewTeam(s);
 
-                ChatColor chatColor = ChatColor.valueOf(configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_COLOR));
+                ChatColor chatColor = ChatColor.valueOf(configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_COLOR));
 
 //                team.setColor(ChatColor.valueOf(configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_COLOR)));
-                team.setPrefix(chatColor + configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_PREFIX));
+                team.setPrefix(chatColor + configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_PREFIX, "") + " ");
                 team.setSuffix("" + ChatColor.RESET);
             }
             worldGroup.setWorldTeam(s, team);
         });
     }
 
+    public void rmGroup(String targetWorldGroup) {
+        Save.setSectionVal(configFile, targetWorldGroup, null);
+
+        List<String> stringList = configFile.getStringList(GROUP);
+        stringList.remove(targetWorldGroup);
+        Save.setSectionVal(configFile, GROUP, stringList);
+
+        try {
+            configFile.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

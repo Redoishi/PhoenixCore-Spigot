@@ -1,5 +1,6 @@
 package fr.redsarow.phoenixcore.minecraft;
 
+import org.bukkit.GameMode;
 import org.bukkit.scoreboard.Team;
 
 import java.util.*;
@@ -16,10 +17,15 @@ public class WorldGroup {
     private String name;
     private Team team;
     private Map<String, Team> worlds;
+    private boolean scoreboard;
+    private boolean deadCount;
+    private GameMode gameMode;
 
     public WorldGroup(String name) {
         this.name = name;
         worlds= new HashMap<>();
+        scoreboard = false;
+        deadCount = false;
         GROUPS.add(this);
     }
 
@@ -62,6 +68,23 @@ public class WorldGroup {
     public void setWorldTeam(String worldName, Team team) {
         this.worlds.put(worldName, team);
     }
+
+    public void setScoreboard(boolean scoreboard) {
+        this.scoreboard = scoreboard;
+    }
+
+    public void setDeadCount(boolean deadCount) {
+        this.deadCount = deadCount;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public void setGameMode(String gameMode) {
+        this.gameMode = GameMode.valueOf(gameMode);
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="get">
@@ -88,5 +111,18 @@ public class WorldGroup {
     public Map<String, Team> getWorldsMap() {
         return worlds;
     }
+
+    public boolean isScoreboard() {
+        return scoreboard;
+    }
+
+    public boolean isDeadCount() {
+        return deadCount;
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
     //</editor-fold>
 }

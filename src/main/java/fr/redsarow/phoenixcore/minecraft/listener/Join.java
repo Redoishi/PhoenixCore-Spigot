@@ -18,8 +18,8 @@ public class Join implements Listener {
 
     PhoenixCore pl;
 
-    public Join(PhoenixCore PhoenixCore) {
-        this.pl = PhoenixCore;
+    public Join(PhoenixCore phoenixCore) {
+        this.pl = phoenixCore;
     }
 
     @EventHandler
@@ -36,6 +36,11 @@ public class Join implements Listener {
         Team team = group.getTeamForWorld(worldName);
         if(team != null){
             team.addEntry(player.getName());
+        }
+        if(group.isScoreboard()){
+            player.setScoreboard(pl.DEFAULT_PLUGIN_SCOREBOARD);
+        }else{
+            player.setScoreboard(pl.getServer().getScoreboardManager().getMainScoreboard());
         }
     }
 }

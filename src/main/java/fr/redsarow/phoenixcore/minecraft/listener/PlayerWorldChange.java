@@ -13,11 +13,11 @@ import org.bukkit.scoreboard.Team;
  * @author redsarow
  * @since 1.0
  */
-public class PlayerEvent implements Listener {
+public class PlayerWorldChange implements Listener {
 
     PhoenixCore pl;
 
-    public PlayerEvent(PhoenixCore phoenixCore) {
+    public PlayerWorldChange(PhoenixCore phoenixCore) {
         this.pl = phoenixCore;
     }
 
@@ -35,10 +35,15 @@ public class PlayerEvent implements Listener {
         if(team != null){
             team.addEntry(player.getName());
         }else{
-            Team lastTeam = PhoenixCore.TEAM_SCOREBOARD.getTeam(player.getWorld().getName());
+            Team lastTeam = pl.DEFAULT_PLUGIN_SCOREBOARD.getTeam(player.getWorld().getName());
             if(lastTeam!=null){
                 lastTeam.removeEntry(player.getName());
             }
+        }
+        if(group.isScoreboard()){
+            player.setScoreboard(pl.DEFAULT_PLUGIN_SCOREBOARD);
+        }else{
+            player.setScoreboard(pl.getServer().getScoreboardManager().getMainScoreboard());
         }
     }
 }
