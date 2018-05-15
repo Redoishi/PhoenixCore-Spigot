@@ -10,3 +10,9 @@ version: 1.0
 discord: false
 token: ""
 prefix: "!"
+channel:
+  # plusieurs channel
+  in:
+    - "bot"
+  # 1 channel
+  out: "bot"

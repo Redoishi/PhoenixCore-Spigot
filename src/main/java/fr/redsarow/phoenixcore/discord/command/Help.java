@@ -9,11 +9,12 @@ import static fr.redsarow.phoenixcore.discord.Bot.PREFIX;
 
 /**
  * @author redsarow
+ * @since 1.0
  */
 public class Help extends ACommand {
 
     public Help() {
-        super("help", "Commande help", PREFIX+"help [commande]", null, "h");
+        super("help", "Commande help", PREFIX + "help [commande]", null, "h");
     }
 
     @Override
@@ -21,15 +22,19 @@ public class Help extends ACommand {
         String[] msgContent = message.getContent().split(" ");
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.withTitle(":question: Help");
-        embedBuilder.withDesc("Prefix des commande: "+PREFIX);
+        embedBuilder.withDesc("Prefix des commande: " + PREFIX);
         embedBuilder.withColor(Color.GREEN);
 
-        if(msgContent.length<2){
-            embedBuilder.appendDesc("Liste des commandes");
+        if (msgContent.length < 2) {
+            embedBuilder.appendDesc("\nListe des commandes");
             helpAllCommand(embedBuilder);
-        }else{
-            embedBuilder.appendDesc("Aide pour "+msgContent[1]);
+        } else {
+            embedBuilder.appendDesc("\nAide pour " + msgContent[1]);
             ACommand command = CommandManagement.getCommand(msgContent[1]);
+            if (command == null) {
+                message.getChannel().sendMessage("La commande : " + msgContent[1] + "est inconnue!");
+                return;
+            }
             embedBuilder.appendField("Nom", command.getName(), true);
             embedBuilder.appendField("Description", command.getDescription(), true);
             embedBuilder.appendField("Usage", command.getUsage(), true);
@@ -40,7 +45,7 @@ public class Help extends ACommand {
         message.getChannel().sendMessage(embedBuilder.build());
     }
 
-    private void helpAllCommand(EmbedBuilder embedBuilder){
+    private void helpAllCommand(EmbedBuilder embedBuilder) {
         StringBuilder names = new StringBuilder();
         StringBuilder descriptions = new StringBuilder();
         StringBuilder usage = new StringBuilder();

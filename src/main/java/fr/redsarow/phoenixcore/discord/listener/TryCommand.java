@@ -12,11 +12,20 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public class TryCommand {
 
+    private Bot bot;
+
+    public TryCommand(Bot bot) {
+
+        this.bot = bot;
+    }
+
     @EventSubscriber
     public void onMsg(MessageReceivedEvent event){
-        IMessage message = event.getMessage();
-        if(message.getContent().startsWith(Bot.PREFIX)){
-            CommandManagement.run(message);
+        if(bot.getChannelIn().contains(event.getChannel())){
+            IMessage message = event.getMessage();
+            if(message.getContent().startsWith(Bot.PREFIX)){
+                CommandManagement.run(message);
+            }
         }
     }
 }

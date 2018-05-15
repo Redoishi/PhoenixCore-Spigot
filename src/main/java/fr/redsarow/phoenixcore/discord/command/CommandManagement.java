@@ -39,6 +39,7 @@ public class CommandManagement {
     }
 
     public static void run(IMessage message) {
+        message.getChannel().setTypingStatus(true);
         if (message.getAuthor().isBot())
             return;
 
@@ -57,6 +58,7 @@ public class CommandManagement {
         }else{
             message.getChannel().sendMessage("La commande : " + msgContent[0] + "est inconnue!");
         }
+        message.getChannel().setTypingStatus(false);
     }
 
 }
