@@ -37,8 +37,8 @@ public class DeathCount extends ACommand {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.withTitle(":skull: Tableau des morts :skull:");
         embedBuilder.withColor(Color.ORANGE);
-        embedBuilder.appendField("Nom",names.toString(), true);
-        embedBuilder.appendField("Morts", death.toString(), true);
+        embedBuilder.appendField("Nom", names.toString().equals("")?"N/C":names.toString(), true);
+        embedBuilder.appendField("Mort(s)", death.toString().equals("")?"N/C":death.toString(), true);
         message.getChannel().sendMessage(embedBuilder.build());
     }
 
