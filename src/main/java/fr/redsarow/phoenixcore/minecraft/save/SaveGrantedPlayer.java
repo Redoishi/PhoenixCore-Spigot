@@ -63,13 +63,16 @@ public class SaveGrantedPlayer {
 
         Player player = offlinePlayer.getPlayer();
         if (player != null) {
-            WorldGroup worldGroup = WorldGroup.findWorldGroupByWorldName(player.getWorld().getName());
-            GameMode gameMode = worldGroup.getGameMode();
-            if(gameMode!= null){
-                player.setGameMode(gameMode);
-            }else{
-                player.setGameMode(GameMode.SURVIVAL);
-            }
+            //fix "java.lang.IllegalStateException: Asynchronous player tracker update!" => when the order comes from Discord
+            pl.getServer().getScheduler().scheduleSyncDelayedTask(pl, () -> {
+                WorldGroup worldGroup = WorldGroup.findWorldGroupByWorldName(player.getWorld().getName());
+                GameMode gameMode = worldGroup.getGameMode();
+                if(gameMode!= null){
+                    player.setGameMode(gameMode);
+                }else{
+                    player.setGameMode(GameMode.SURVIVAL);
+                }
+            });
         }
 
         configFile.save(file);
