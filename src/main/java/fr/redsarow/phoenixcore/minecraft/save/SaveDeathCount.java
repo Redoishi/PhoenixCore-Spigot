@@ -1,6 +1,7 @@
 package fr.redsarow.phoenixcore.minecraft.save;
 
 import fr.redsarow.phoenixcore.PhoenixCore;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -37,7 +38,7 @@ public class SaveDeathCount {
         configFile = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void initPlayer(Player player){
+    public void initPlayer(OfflinePlayer player){
         String playerId = player.getUniqueId().toString();
         Save.setSectionVal(configFile, playerId, 0);
 

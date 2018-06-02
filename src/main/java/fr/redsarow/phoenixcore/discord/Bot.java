@@ -2,6 +2,7 @@ package fr.redsarow.phoenixcore.discord;
 
 import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.discord.command.DeathCount;
+import fr.redsarow.phoenixcore.discord.command.Grant;
 import fr.redsarow.phoenixcore.discord.command.Help;
 import fr.redsarow.phoenixcore.discord.command.Info;
 import fr.redsarow.phoenixcore.discord.listener.TryCommand;
@@ -27,18 +28,21 @@ public class Bot {
 
     public static Logger LOGGER;
     public static String PREFIX;
+    public static List<String> ROLES;
 
     private static IDiscordClient client;
 
-    private PhoenixCore plugin;
     private IChannel channelOut;
     private List<IChannel> channelIn;
+
+    private final PhoenixCore plugin;
     private final SendMessage sendMessage;
 
     public Bot(PhoenixCore plugin) {
         this.plugin = plugin;
         LOGGER = plugin.getLogger();
         PREFIX = plugin.CONFIG.getStringVal("prefix");
+        ROLES = plugin.CONFIG.getStringListVal("roles");
 
         client = createClient(plugin.CONFIG.getStringVal("token"), true);
 
@@ -47,10 +51,11 @@ public class Bot {
         dispatcher.registerListener(new TryCommand(this));
         dispatcher.registerListener(this);
 
-        //cmd
+        //command
         new Info();
         new Help();
         new DeathCount(this);
+        new Grant(this);
 
         sendMessage = new SendMessage(this);
     }

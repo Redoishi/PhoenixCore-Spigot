@@ -54,7 +54,7 @@ public class SavePlayerWorldParam {
     }
 
     /**
-     * try by cmd for tp
+     * try by command for tp
      *
      * @param player
      *

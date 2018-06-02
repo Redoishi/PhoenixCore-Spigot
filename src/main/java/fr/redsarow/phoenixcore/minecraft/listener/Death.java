@@ -41,7 +41,7 @@ public class Death implements Listener {
             int increment = playerDeathCount.increment(player);
             objectiveDeath.getScore(player.getDisplayName()).setScore(increment);
         }
-        //TODO msg discord
+
         pl.discordBot.getSendMessage().sendDeath(world.getName()+"\n"+event.getDeathMessage());
 
         if(player.getBedSpawnLocation() == null){
