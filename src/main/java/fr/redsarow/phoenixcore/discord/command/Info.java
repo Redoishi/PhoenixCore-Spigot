@@ -21,7 +21,7 @@ public class Info extends ACommand {
     }
 
     @Override
-    public void run(IMessage message) {
+    public boolean run(IMessage message) {
         IUser client = Bot.getClient().getOurUser();
         EmbedObject build = new EmbedBuilder()
                 .withAuthorName(client.getName())
@@ -32,9 +32,10 @@ public class Info extends ACommand {
                 .appendField("Link","[github](https://github.com/redsarow)",false)
                 .withFooterText(PREFIX+"help")
 
-                .withColor(Color.GREEN)
+                .withColor(Color.WHITE)
 
                 .build();
         message.getChannel().sendMessage(build);
+        return true;
     }
 }

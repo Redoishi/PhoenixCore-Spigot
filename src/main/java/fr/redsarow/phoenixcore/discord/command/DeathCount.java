@@ -25,7 +25,7 @@ public class DeathCount extends ACommand {
     }
 
     @Override
-    public void run(IMessage message) {
+    public boolean run(IMessage message) {
         Map<String, Integer> allDeath = bot.getPlugin().getPlayerDeathCount().getAll();
         StringBuilder names = new StringBuilder();
         StringBuilder death = new StringBuilder();
@@ -36,10 +36,12 @@ public class DeathCount extends ACommand {
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.withTitle(":skull: Tableau des morts :skull:");
-        embedBuilder.withColor(Color.ORANGE);
+        embedBuilder.withColor(Color.BLACK);
         embedBuilder.appendField("Nom", names.toString().equals("")?"N/C":names.toString(), true);
         embedBuilder.appendField("Mort(s)", death.toString().equals("")?"N/C":death.toString(), true);
         message.getChannel().sendMessage(embedBuilder.build());
+
+        return true;
     }
 
 }

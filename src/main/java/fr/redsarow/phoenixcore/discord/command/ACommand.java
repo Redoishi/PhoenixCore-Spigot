@@ -54,6 +54,6 @@ public abstract class ACommand {
         return alias;
     }
 
-    public abstract void run(IMessage message);
+    public abstract boolean run(IMessage message);
 
 }

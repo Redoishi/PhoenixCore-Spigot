@@ -50,13 +50,16 @@ public class CommandManagement {
         ACommand command = getCommand(msgContent[0].substring(1));
         if (command != null) {
             try {
-                command.run(message);
+                boolean run = command.run(message);
+                if(!run){
+                    message.getChannel().sendMessage(":x: "+command.getUsage());
+                }
             } catch (Exception e) {
                 message.getChannel().sendMessage("L'exécution de la commande: " + command.getName() + " a subit une erreur");
                 e.printStackTrace();
             }
         }else{
-            message.getChannel().sendMessage("La commande : " + msgContent[0] + "est inconnue!");
+            message.getChannel().sendMessage("La commande : " + msgContent[0] + " est inconnue!");
         }
         message.getChannel().setTypingStatus(false);
     }

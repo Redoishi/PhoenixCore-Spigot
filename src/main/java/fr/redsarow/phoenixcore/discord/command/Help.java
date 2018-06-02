@@ -18,12 +18,12 @@ public class Help extends ACommand {
     }
 
     @Override
-    public void run(IMessage message) {
+    public boolean run(IMessage message) {
         String[] msgContent = message.getContent().split(" ");
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.withTitle(":question: Help");
         embedBuilder.withDesc("Prefix des commande: " + PREFIX);
-        embedBuilder.withColor(Color.GREEN);
+        embedBuilder.withColor(Color.WHITE);
 
         if (msgContent.length < 2) {
             embedBuilder.appendDesc("\nListe des commandes");
@@ -33,7 +33,7 @@ public class Help extends ACommand {
             ACommand command = CommandManagement.getCommand(msgContent[1]);
             if (command == null) {
                 message.getChannel().sendMessage("La commande : " + msgContent[1] + "est inconnue!");
-                return;
+                return true;
             }
             embedBuilder.appendField("Nom", command.getName(), true);
             embedBuilder.appendField("Description", command.getDescription(), true);
@@ -43,6 +43,7 @@ public class Help extends ACommand {
         }
 
         message.getChannel().sendMessage(embedBuilder.build());
+        return true;
     }
 
     private void helpAllCommand(EmbedBuilder embedBuilder) {
