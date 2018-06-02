@@ -1,7 +1,8 @@
-package fr.redsarow.phoenixcore.minecraft.cmd;
+package fr.redsarow.phoenixcore.minecraft.command;
 
 import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.minecraft.WorldGroup;
+import fr.redsarow.phoenixcore.minecraft.save.SavePlayerInformation;
 import fr.redsarow.phoenixcore.minecraft.save.SavePlayerWorldParam;
 import fr.redsarow.phoenixcore.minecraft.util.Color;
 import org.bukkit.ChatColor;
@@ -21,10 +22,12 @@ import java.io.IOException;
 public class TpMap extends AMyCommand {
 
     private SavePlayerWorldParam playerWorldParam;
+    private SavePlayerInformation savePlayerInformation;
 
-    public TpMap(PhoenixCore phoenixCore, CommandMap commandMap, SavePlayerWorldParam playerWorldParam) {
+    public TpMap(PhoenixCore phoenixCore, CommandMap commandMap, SavePlayerWorldParam playerWorldParam, SavePlayerInformation savePlayerInformation) {
         super(phoenixCore, "tpMap");
         this.playerWorldParam = playerWorldParam;
+        this.savePlayerInformation = savePlayerInformation;
         addDescription("tp other map");
         addUsage("/tpMap <WorldGroup>");
         String tabComplete[] = WorldGroup.getListNameGroups().toArray(new String[0]);
@@ -82,6 +85,17 @@ public class TpMap extends AMyCommand {
                 );
         player.sendMessage("Tp sur " + Color.INFO + targetWorldGroup + ChatColor.RESET);
         player.teleport(targetWorldLocation);
+
+        //TODO active for advancement in 1.13
+//        try {
+//            savePlayerInformation.save(player.getUniqueId(),
+//                    WorldGroup.findWorldGroupByWorldName(player.getWorld().getName()).getName(),
+//                    targetWorldGroup);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            player.sendMessage(Color.ERROR + "Une erreur est survenue contacter Redsarow");
+//            return true;
+//        }
 
         setPlayerParam(player, targetWorldGroup);
 

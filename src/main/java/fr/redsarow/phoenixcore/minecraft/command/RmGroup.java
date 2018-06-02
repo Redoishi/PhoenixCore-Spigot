@@ -1,4 +1,4 @@
-package fr.redsarow.phoenixcore.minecraft.cmd;
+package fr.redsarow.phoenixcore.minecraft.command;
 
 import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.minecraft.WorldGroup;

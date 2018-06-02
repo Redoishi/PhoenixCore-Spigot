@@ -1,4 +1,4 @@
-package fr.redsarow.phoenixcore.minecraft.cmd;
+package fr.redsarow.phoenixcore.minecraft.command;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
