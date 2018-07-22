@@ -46,10 +46,10 @@ public final class PhoenixCore extends JavaPlugin {
         try {
 
             DEFAULT_PLUGIN_SCOREBOARD = getServer().getScoreboardManager().getNewScoreboard();
-            Objective objectiveHealth = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("vie", "health");
+            Objective objectiveHealth = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("vie", "health", "vie");
             objectiveHealth.setDisplaySlot(DisplaySlot.PLAYER_LIST);
             objectiveHealth.setDisplayName("vie");
-            Objective objectiveDeath = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("Mort", "dummy");
+            Objective objectiveDeath = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("Mort", "dummy", "Mort");
             objectiveDeath.setDisplaySlot(DisplaySlot.SIDEBAR);
             objectiveDeath.setDisplayName(ChatColor.RED+"Mort");
 
