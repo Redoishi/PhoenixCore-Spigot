@@ -132,7 +132,7 @@ public class SaveWorlds {
             if (!serverWorlds.contains(s)) {
                 //TODO to special class
                 WorldCreator wc = new WorldCreator(s);
-                wc.type(WorldType.NORMAL);
+                wc.type(WorldType.FLAT);
                 Bukkit.getServer().createWorld(wc);
             }
             Team team = null;

@@ -82,7 +82,7 @@ public class WorldGroup {
     }
 
     public void setGameMode(String gameMode) {
-        this.gameMode = GameMode.valueOf(gameMode);
+        this.gameMode = GameMode.valueOf(gameMode==null?GameMode.SURVIVAL.name():gameMode);
     }
 
     //</editor-fold>

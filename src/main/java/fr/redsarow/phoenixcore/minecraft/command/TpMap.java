@@ -84,20 +84,24 @@ public class TpMap extends AMyCommand {
                         targetWorldGroup
                 );
         player.sendMessage("Tp sur " + Color.INFO + targetWorldGroup + ChatColor.RESET);
-        player.teleport(targetWorldLocation);
+        //TODO 1.13
+        player.saveData();
 
         //TODO active for advancement in 1.13
-//        try {
-//            savePlayerInformation.save(player.getUniqueId(),
-//                    WorldGroup.findWorldGroupByWorldName(player.getWorld().getName()).getName(),
-//                    targetWorldGroup);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            player.sendMessage(Color.ERROR + "Une erreur est survenue contacter Redsarow");
-//            return true;
-//        }
+        try {
+            savePlayerInformation.save(player.getUniqueId(),
+                    WorldGroup.findWorldGroupByWorldName(player.getWorld().getName()).getName(),
+                    targetWorldGroup);
+        } catch (IOException e) {
+            e.printStackTrace();
+            player.sendMessage(Color.ERROR + "Une erreur est survenue contacter Redsarow");
+            return true;
+        }
 
-        setPlayerParam(player, targetWorldGroup);
+        player.teleport(targetWorldLocation);
+        player.loadData();
+        player.updateInventory();
+//        setPlayerParam(player, targetWorldGroup);
 
         return true;
     }

@@ -4,10 +4,7 @@ import fr.redsarow.phoenixcore.discord.Bot;
 import fr.redsarow.phoenixcore.minecraft.command.Grant;
 import fr.redsarow.phoenixcore.minecraft.command.RmGroup;
 import fr.redsarow.phoenixcore.minecraft.command.TpMap;
-import fr.redsarow.phoenixcore.minecraft.listener.Death;
-import fr.redsarow.phoenixcore.minecraft.listener.Join;
-import fr.redsarow.phoenixcore.minecraft.listener.Leave;
-import fr.redsarow.phoenixcore.minecraft.listener.PlayerWorldChange;
+import fr.redsarow.phoenixcore.minecraft.listener.*;
 import fr.redsarow.phoenixcore.minecraft.save.*;
 import fr.redsarow.phoenixcore.minecraft.save.config.Config;
 import fr.redsarow.phoenixcore.minecraft.save.config.GetConfig;
@@ -23,7 +20,9 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author redsarow
@@ -51,7 +50,7 @@ public final class PhoenixCore extends JavaPlugin {
             objectiveHealth.setDisplayName("vie");
             Objective objectiveDeath = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("Mort", "dummy", "Mort");
             objectiveDeath.setDisplaySlot(DisplaySlot.SIDEBAR);
-            objectiveDeath.setDisplayName(ChatColor.RED+"Mort");
+            objectiveDeath.setDisplayName(ChatColor.RED + "Mort");
 
             getLogger().info("init config");
             if (!Config.checkConfig(this, "config.yml", "")) {
@@ -92,6 +91,7 @@ public final class PhoenixCore extends JavaPlugin {
             pm.registerEvents(new Leave(this), this);
             pm.registerEvents(new PlayerWorldChange(this), this);
             pm.registerEvents(new Death(this, playerDeathCount, objectiveDeath), this);
+            pm.registerEvents(new AdvancementDone(this), this);
 
 
             //command
@@ -105,7 +105,7 @@ public final class PhoenixCore extends JavaPlugin {
             new RmGroup(this, commandMap, SaveWorlds, playerWorldParam);
             new Grant(this, commandMap);
 
-            if(CONFIG.getBoolVal("discord")){
+            if (CONFIG.getBoolVal("discord")) {
                 getLogger().info("init discord Bot");
                 discordBot = new Bot(this);
                 //event
@@ -128,15 +128,18 @@ public final class PhoenixCore extends JavaPlugin {
         return playerDeathCount;
     }
 
-    public void addGrant(String sender, String newPlayer){
+    public void addGrant(String sender, String newPlayer) {
         try {
             grantedPlayer.addGranted(Bukkit.getOfflinePlayer(waitGranted.get(newPlayer)));
 
             String msg = Color.OK + "Le joueur '"
                     + Color.INFO + newPlayer + Color.OK
-                    + "' a été ajoué par '" + Color.INFO + sender +Color.OK+"'";
+                    + "' a été ajoué par '" + Color.INFO + sender + Color.OK + "'";
             getServer().broadcastMessage(msg);
-            discordBot.getSendMessage().sendNewGrantedPlayer(msg);
+            String discordMsg = "Le joueur '"
+                    + newPlayer
+                    + "' a été ajoué par '" + sender + "'";
+            discordBot.getSendMessage().sendNewGrantedPlayer(discordMsg);
 
         } catch (IOException e) {
             getServer().broadcastMessage("error");
