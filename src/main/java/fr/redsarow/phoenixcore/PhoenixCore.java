@@ -1,5 +1,6 @@
 package fr.redsarow.phoenixcore;
 
+import fr.redsarow.mi18n.api.I18n;
 import fr.redsarow.phoenixcore.discord.Bot;
 import fr.redsarow.phoenixcore.minecraft.command.Grant;
 import fr.redsarow.phoenixcore.minecraft.command.RmGroup;
@@ -21,6 +22,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,6 +36,8 @@ public final class PhoenixCore extends JavaPlugin {
 
     public static final Map<String, UUID> waitGranted = new HashMap<>();
 
+    private static I18n i18n;
+
     public Scoreboard DEFAULT_PLUGIN_SCOREBOARD;
     public GetConfig CONFIG;
     public Bot discordBot;
@@ -43,6 +47,8 @@ public final class PhoenixCore extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
+
+            i18n = new I18n(this.getClass(), "phoenixCoreLangMinecraft", Locale.FRENCH);
 
             DEFAULT_PLUGIN_SCOREBOARD = getServer().getScoreboardManager().getNewScoreboard();
             Objective objectiveHealth = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("vie", "health", "vie");

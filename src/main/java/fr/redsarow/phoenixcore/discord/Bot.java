@@ -1,5 +1,6 @@
 package fr.redsarow.phoenixcore.discord;
 
+import fr.redsarow.mi18n.api.I18n;
 import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.discord.command.DeathCount;
 import fr.redsarow.phoenixcore.discord.command.Grant;
@@ -16,8 +17,10 @@ import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.StatusType;
 import sx.blah.discord.util.DiscordException;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -31,6 +34,7 @@ public class Bot {
     public static List<String> ROLES;
 
     private static IDiscordClient client;
+    private static I18n i18n;
 
     private IChannel channelOut;
     private List<IChannel> channelIn;
@@ -38,8 +42,9 @@ public class Bot {
     private final PhoenixCore plugin;
     private final SendMessage sendMessage;
 
-    public Bot(PhoenixCore plugin) {
+    public Bot(PhoenixCore plugin) throws URISyntaxException {
         this.plugin = plugin;
+        i18n = new I18n(this.getClass(), "phoenixCoreLangDiscord", Locale.FRENCH);
         LOGGER = plugin.getLogger();
         PREFIX = plugin.CONFIG.getStringVal("prefix");
         ROLES = plugin.CONFIG.getStringListVal("roles");

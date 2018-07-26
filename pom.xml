@@ -43,6 +43,12 @@
             <id>jcenter</id>
             <url>http://jcenter.bintray.com</url>
         </repository>
+
+        <!--Mi18nAPI-->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -59,6 +65,13 @@
             <groupId>com.discord4j</groupId>
             <artifactId>Discord4J</artifactId>
             <version>2.10.1</version>
+        </dependency>
+
+        <!--Mi18nAPI-->
+        <dependency>
+            <groupId>com.github.redsarow.Mi18n</groupId>
+            <artifactId>Mi18nAPI</artifactId>
+            <version>-46b40d8d7c-1</version>
         </dependency>
     </dependencies>
 
