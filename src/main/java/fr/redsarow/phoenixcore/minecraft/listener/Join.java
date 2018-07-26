@@ -36,40 +36,44 @@ public class Join implements Listener {
         String worldName = player.getWorld().getName();
         WorldGroup group = WorldGroup.findWorldGroupByWorldName(worldName);
         if (group == null) {
-            player.sendMessage(Color.ERROR+"Une erreur est survenue contacter Redsarow");
+            player.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("error"));
             return;
         }
-        player.sendMessage("Connecter sur " + Color.INFO + worldName + ChatColor.RESET
-                + " du groupe " + Color.INFO + group.getName());
+        player.sendMessage(PhoenixCore.getI18n().get("listener.onJoin"
+                , Color.INFO + worldName + ChatColor.RESET
+                , Color.INFO + group.getName()));
         Team team = group.getTeamForWorld(worldName);
-        if(team != null){
+        if (team != null) {
             team.addEntry(player.getName());
         }
-        if(group.isScoreboard()){
+        if (group.isScoreboard()) {
             player.setScoreboard(pl.DEFAULT_PLUGIN_SCOREBOARD);
-        }else{
+        }else {
             player.setScoreboard(pl.getServer().getScoreboardManager().getMainScoreboard());
         }
 
         UUID uniqueId = player.getUniqueId();
-        if(!grantedPlayer.isGranted(uniqueId)){
+        if (!grantedPlayer.isGranted(uniqueId)) {
             String playerName = player.getName();
             player.setGameMode(GameMode.SPECTATOR);
             PhoenixCore.waitGranted.put(playerName, uniqueId);
 
-            pl.discordBot.getSendMessage().sendNotGrantedPlayer(
-                    "Le joueur '"+playerName+"', uuid '"+ uniqueId
-                            +"' vient de se connecter. "
-                    ,playerName);
+            String msgDiscord = PhoenixCore.getI18n().get("listener.onJoin.noGrant"
+                    , playerName
+                    , uniqueId);
 
-            TextComponent msgTC = new TextComponent(
-                    "Le joueur '"+Color.INFO+playerName+Color.WARN+"', uuid '"+Color.INFO+ uniqueId+Color.WARN
-                    +"' vient de se connecter. ");
+            pl.discordBot.getSendMessage().sendNotGrantedPlayer(msgDiscord, playerName);
+
+
+            String msg = PhoenixCore.getI18n().get("listener.onJoin.noGrant"
+                    , Color.INFO + playerName + Color.WARN
+                    , "" + Color.INFO + uniqueId + Color.WARN);
+            TextComponent msgTC = new TextComponent(msg);
             msgTC.setColor(Color.WARN);
-            TextComponent cmdMsgTC = new TextComponent("/grant "+playerName);
+            TextComponent cmdMsgTC = new TextComponent("/grant " + playerName);
             cmdMsgTC.setColor(Color.WARN);
             cmdMsgTC.setUnderlined(true);
-            cmdMsgTC.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/grant "+playerName));
+            cmdMsgTC.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/grant " + playerName));
 
             msgTC.addExtra(cmdMsgTC);
             pl.getServer().spigot().broadcast(msgTC);

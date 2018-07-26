@@ -74,7 +74,7 @@ public class TpMap extends AMyCommand {
             playerWorldParam.setLastWorldInformations(player);
         } catch (IOException e) {
             e.printStackTrace();
-            player.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("cmd.error"));
+            player.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("error"));
             return true;
         }
 
@@ -95,7 +95,7 @@ public class TpMap extends AMyCommand {
                     targetWorldGroup);
         } catch (IOException e) {
             e.printStackTrace();
-            player.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("cmd.error"));
+            player.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("error"));
             return true;
         }
 

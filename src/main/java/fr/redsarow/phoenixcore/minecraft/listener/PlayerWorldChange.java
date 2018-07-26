@@ -28,7 +28,7 @@ public class PlayerWorldChange implements Listener {
         String worldName = player.getWorld().getName();
         WorldGroup group = WorldGroup.findWorldGroupByWorldName(worldName);
         if (group == null) {
-            player.sendMessage(Color.ERROR+"Une erreur est survenue contacter Redsarow");
+            player.sendMessage(Color.ERROR+PhoenixCore.getI18n().get("error"));
             return;
         }
         Team team = group.getTeamForWorld(worldName);
