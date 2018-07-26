@@ -26,21 +26,21 @@ public class Grant extends AMyCommand<PhoenixCore> {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if ((args.length<1)) {
+        if ((args.length < 1)) {
             return false;
         }
-        if(sender instanceof Player){
-            Player p  = (Player) sender;
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
             if (waitGranted.containsKey(p.getName())) {
-                p.sendMessage("Desoler mais vous ne pouvez pas!");
+                p.sendMessage(PhoenixCore.getI18n().get(p, "cmd.grant.autoGrant"));
                 return true;
             }
         }
 
         try {
             getPlugin().addGrant(sender.getName(), args[0]);
-        }catch (Exception e){
-            sender.sendMessage(Color.ERROR+" error player");
+        } catch (Exception e) {
+            sender.sendMessage(Color.ERROR + " " + PhoenixCore.getI18n().get((Player) sender, "cmd.grant.error"));
         }
 
         return true;

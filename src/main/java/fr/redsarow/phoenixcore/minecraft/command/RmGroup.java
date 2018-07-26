@@ -39,7 +39,7 @@ public class RmGroup extends AMyCommand {
         if (args.length < 1) {
             return false;
         }
-        if (sender instanceof Player && !((Player) sender).isOp()) {
+        if (sender instanceof Player && !sender.isOp()) {
             return false;
         }
         String targetWorldGroup = args[0];
@@ -53,13 +53,12 @@ public class RmGroup extends AMyCommand {
                 builder.append(s);
             });
             builder.append("]");
-
-            sender.sendMessage(Color.ERROR + "Erreur. "
-                    + ChatColor.RESET + "Le choix "
-                    + Color.INFO + targetWorldGroup
-                    + ChatColor.RESET + "est inconnue.\n"
-                    + "Les Choix valide: "
-                    + Color.INFO + builder.toString());
+            sender.sendMessage(Color.ERROR + "Error. "
+                    + ChatColor.RESET +
+                    PhoenixCore.getI18n().get("cmd.error.choices"
+                            ,Color.INFO + targetWorldGroup+ ChatColor.RESET
+                            ,Color.INFO + builder.toString())
+            );
 
             return true;
         }

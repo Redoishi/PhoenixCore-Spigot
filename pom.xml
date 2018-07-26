@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.github.redsarow.Mi18n</groupId>
             <artifactId>Mi18nAPI</artifactId>
-            <version>-46b40d8d7c-1</version>
+            <version>master-b1f0bd7892-1</version>
         </dependency>
     </dependencies>
 

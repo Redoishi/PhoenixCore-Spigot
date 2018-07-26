@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author redsarow
@@ -41,14 +43,17 @@ public final class PhoenixCore extends JavaPlugin {
     public Scoreboard DEFAULT_PLUGIN_SCOREBOARD;
     public GetConfig CONFIG;
     public Bot discordBot;
+
     private SaveDeathCount playerDeathCount;
     private SaveGrantedPlayer grantedPlayer;
+    private static Logger LOGGER;
 
     @Override
     public void onEnable() {
         try {
 
-            i18n = new I18n(this.getClass(), "phoenixCoreLangMinecraft", Locale.FRENCH);
+            LOGGER = getLogger();
+            i18n = new I18n(this.getClass(), "phoenixCoreLangMinecraft", Locale.FRENCH, Locale.ENGLISH);
 
             DEFAULT_PLUGIN_SCOREBOARD = getServer().getScoreboardManager().getNewScoreboard();
             Objective objectiveHealth = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("vie", "health", "vie");
@@ -58,24 +63,23 @@ public final class PhoenixCore extends JavaPlugin {
             objectiveDeath.setDisplaySlot(DisplaySlot.SIDEBAR);
             objectiveDeath.setDisplayName(ChatColor.RED + "Mort");
 
-            getLogger().info("init config");
+            getLogger().info(i18n.get("init.config"));
             if (!Config.checkConfig(this, "config.yml", "")) {
                 getLogger().severe("Error setup config. Stop plugin");
                 this.getPluginLoader().disablePlugin(this);
                 return;
             }
-            getLogger().info("get config");
             CONFIG = new GetConfig(this);
 
 
-            getLogger().info("init SaveWorlds");
+            getLogger().info(i18n.get("init.saveWorlds"));
             SaveWorlds SaveWorlds = new SaveWorlds(this);
             SaveWorlds.loadWorlds();
 
-            getLogger().info("init PlayerWorldParam");
+            getLogger().info(i18n.get("init.playerWorldParam"));
             SavePlayerWorldParam playerWorldParam = new SavePlayerWorldParam(this);
 
-            getLogger().info("init PlayerDeathCount");
+            getLogger().info(i18n.get("init.playerDeathCount"));
             playerDeathCount = new SaveDeathCount(this);
             Map<String, Integer> allPlayerDeath = playerDeathCount.getAll();
             allPlayerDeath.forEach((s, integer) -> objectiveDeath.getScore(
@@ -83,7 +87,7 @@ public final class PhoenixCore extends JavaPlugin {
                     .setScore(integer)
             );
 
-            getLogger().info("init SaveGrantedPlayer");
+            getLogger().info(i18n.get("init.saveGrantedPlayer"));
             grantedPlayer = new SaveGrantedPlayer(this, playerDeathCount, objectiveDeath);
 
 //TODO 1.13
@@ -91,7 +95,7 @@ public final class PhoenixCore extends JavaPlugin {
 
 
             //event
-            getLogger().info("init Listener");
+            getLogger().info(i18n.get("init.listener"));
             PluginManager pm = Bukkit.getPluginManager();
             pm.registerEvents(new Join(this, grantedPlayer), this);
             pm.registerEvents(new Leave(this), this);
@@ -101,7 +105,7 @@ public final class PhoenixCore extends JavaPlugin {
 
 
             //command
-            getLogger().info("init commands");
+            getLogger().info(i18n.get("init.command"));
             Field f = null;
             f = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             f.setAccessible(true);
@@ -112,15 +116,14 @@ public final class PhoenixCore extends JavaPlugin {
             new Grant(this, commandMap);
 
             if (CONFIG.getBoolVal("discord")) {
-                getLogger().info("init discord Bot");
+                getLogger().info(i18n.get("init.discord"));
                 discordBot = new Bot(this);
                 //event
 //                pm.registerEvents(new (this), this);
             }
 
-        } catch (Exception ex) {
-            getLogger().severe(ex.getLocalizedMessage());
-            ex.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
             this.getPluginLoader().disablePlugin(this);
         }
     }
@@ -138,20 +141,28 @@ public final class PhoenixCore extends JavaPlugin {
         try {
             grantedPlayer.addGranted(Bukkit.getOfflinePlayer(waitGranted.get(newPlayer)));
 
-            String msg = Color.OK + "Le joueur '"
-                    + Color.INFO + newPlayer + Color.OK
-                    + "' a été ajoué par '" + Color.INFO + sender + Color.OK + "'";
+            String msg = i18n.get("msg.addGrant"
+                    ,Color.INFO + newPlayer + Color.OK
+                    , Color.INFO + sender + Color.OK);
             getServer().broadcastMessage(msg);
-            String discordMsg = "Le joueur '"
-                    + newPlayer
-                    + "' a été ajoué par '" + sender + "'";
+            String discordMsg = i18n.get("msg.addGrant"
+                    ,newPlayer
+                    , sender);
             discordBot.getSendMessage().sendNewGrantedPlayer(discordMsg);
 
         } catch (IOException e) {
             getServer().broadcastMessage("error");
             discordBot.getSendMessage().sendMsg("error");
 
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         }
+    }
+
+    public static I18n getI18n() {
+        return i18n;
+    }
+
+    public static Logger getLOGGER() {
+        return LOGGER;
     }
 }

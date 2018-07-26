@@ -220,7 +220,7 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
         if (getPermission() != null) {
             if (!commandSender.hasPermission(getPermission())) {
                 if (getPermissionMessage() == null) {
-                    commandSender.sendMessage(ChatColor.RED + "pas la perme :(");
+                    commandSender.sendMessage(ChatColor.RED + "no permission!");
                 } else {
                     commandSender.sendMessage(getPermissionMessage());
                 }

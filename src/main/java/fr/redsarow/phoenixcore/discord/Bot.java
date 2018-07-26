@@ -44,7 +44,7 @@ public class Bot {
 
     public Bot(PhoenixCore plugin) throws URISyntaxException {
         this.plugin = plugin;
-        i18n = new I18n(this.getClass(), "phoenixCoreLangDiscord", Locale.FRENCH);
+        i18n = new I18n(this.getClass(), "phoenixCoreLangDiscord", Locale.FRENCH, Locale.ENGLISH);
         LOGGER = plugin.getLogger();
         PREFIX = plugin.CONFIG.getStringVal("prefix");
         ROLES = plugin.CONFIG.getStringListVal("roles");
@@ -118,5 +118,9 @@ public class Bot {
 
     public SendMessage getSendMessage() {
         return sendMessage;
+    }
+
+    public static I18n getI18n() {
+        return i18n;
     }
 }

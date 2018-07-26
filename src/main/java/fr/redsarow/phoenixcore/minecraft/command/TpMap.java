@@ -40,7 +40,7 @@ public class TpMap extends AMyCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Color.ERROR + "not Player");
+            sender.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("cmd.tpMap.error.noPlayer"));
             return true;
         }
         if (args.length < 1) {
@@ -60,12 +60,12 @@ public class TpMap extends AMyCommand {
             });
             builder.append("]");
 
-            player.sendMessage(Color.ERROR + "Erreur. "
-                    + ChatColor.RESET + "Le choix "
-                    + Color.INFO + targetWorldGroup
-                    + ChatColor.RESET + "est inconnue.\n"
-                    + "Les Choix valide: "
-                    + Color.INFO + builder.toString());
+            player.sendMessage(Color.ERROR + "Error. "
+                    + ChatColor.RESET +
+                    PhoenixCore.getI18n().get("cmd.error.choices"
+                            ,Color.INFO + targetWorldGroup+ ChatColor.RESET
+                            ,Color.INFO + builder.toString())
+            );
 
             return true;
         }
@@ -74,7 +74,7 @@ public class TpMap extends AMyCommand {
             playerWorldParam.setLastWorldInformations(player);
         } catch (IOException e) {
             e.printStackTrace();
-            player.sendMessage(Color.ERROR + "Une erreur est survenue contacter Redsarow");
+            player.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("cmd.error"));
             return true;
         }
 
@@ -83,7 +83,8 @@ public class TpMap extends AMyCommand {
                         player,
                         targetWorldGroup
                 );
-        player.sendMessage("Tp sur " + Color.INFO + targetWorldGroup + ChatColor.RESET);
+        player.sendMessage(PhoenixCore.getI18n().get("cmd.tpMap.tp"
+                , Color.INFO + targetWorldGroup + ChatColor.RESET));
         //TODO 1.13
         player.saveData();
 
@@ -94,7 +95,7 @@ public class TpMap extends AMyCommand {
                     targetWorldGroup);
         } catch (IOException e) {
             e.printStackTrace();
-            player.sendMessage(Color.ERROR + "Une erreur est survenue contacter Redsarow");
+            player.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("cmd.error"));
             return true;
         }
 
