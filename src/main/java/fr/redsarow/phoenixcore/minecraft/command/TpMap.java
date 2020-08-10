@@ -100,10 +100,21 @@ public class TpMap extends AMyCommand {
         }
 
         player.teleport(targetWorldLocation);
-        player.loadData();
-        player.updateInventory();
-//        setPlayerParam(player, targetWorldGroup);
+//        player.loadData();
+//        player.updateInventory();
 
+        setPlayerParam(player, targetWorldGroup);
+        if(player.getGameMode() != GameMode.SPECTATOR){
+            WorldGroup worldGroup = WorldGroup.findWorldGroupByName(targetWorldGroup);
+            GameMode gameMode = worldGroup.getGameMode();
+            if(gameMode!= null){
+                player.setGameMode(gameMode);
+            }
+        }else{
+            player.setGameMode(GameMode.SPECTATOR);
+        }
+
+//        player.saveData();
         return true;
     }
 

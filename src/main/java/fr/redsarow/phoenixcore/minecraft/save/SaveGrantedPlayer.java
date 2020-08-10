@@ -56,7 +56,7 @@ public class SaveGrantedPlayer {
         UUID uuid = offlinePlayer.getUniqueId();
         setSectionVal(configFile, uuid.toString(), offlinePlayer.getName());
         granted.add(uuid);
-        playerDeathCount.initPlayer(offlinePlayer);
+//        playerDeathCount.initPlayer(offlinePlayer);
         objectiveDeath.getScore(offlinePlayer.getName()).setScore(0);
 
         PhoenixCore.waitGranted.remove(offlinePlayer.getName());

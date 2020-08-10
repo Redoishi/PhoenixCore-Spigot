@@ -1,6 +1,8 @@
 package fr.redsarow.phoenixcore.discord.command;
 
-import sx.blah.discord.handle.obj.IMessage;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,8 +14,8 @@ import java.util.Map;
  */
 public class CommandManagement {
 
-    private static Map<String, ACommand> commands = new HashMap<>();
-    private static Map<String, String> aliases = new HashMap<>();
+    private static final Map<String, ACommand> commands = new HashMap<>();
+    private static final Map<String, String> aliases = new HashMap<>();
 
     public static void registerCommand(ACommand command) {
         commands.put(command.getName().toLowerCase(), command);
@@ -38,30 +40,34 @@ public class CommandManagement {
         return commands.get(arg.toLowerCase());
     }
 
-    public static void run(IMessage message) {
-        message.getChannel().setTypingStatus(true);
-        if (message.getAuthor().isBot())
-            return;
+    public static Mono<Void> run(Message message) {
+        MessageChannel messageChannel = message.getChannel().block();
+        assert messageChannel != null;
+
+//        messageChannel.setTypingStatus(true);
 
         String[] msgContent = message.getContent().split(" ");
-        if (msgContent[0].length() == 1) {
-            return;
+        if (msgContent[0].length() == 1) {// si msg == PREFIX et pas de commande
+            return Mono.empty().then();
         }
+
         ACommand command = getCommand(msgContent[0].substring(1));
         if (command != null) {
             try {
                 boolean run = command.run(message);
                 if(!run){
-                    message.getChannel().sendMessage(":x: "+command.getUsage());
+                    messageChannel.createMessage(":x: " + command.getUsage());
                 }
             } catch (Exception e) {
-                message.getChannel().sendMessage("L'exécution de la commande: " + command.getName() + " a subit une erreur");
+                messageChannel.createMessage("L'exécution de la commande: " + command.getName() + " a subit une erreur");
                 e.printStackTrace();
             }
         }else{
-            message.getChannel().sendMessage("La commande : " + msgContent[0] + " est inconnue!");
+            messageChannel.createMessage("La commande : " + msgContent[0] + " est inconnue!");
         }
-        message.getChannel().setTypingStatus(false);
+//        messageChannel.setTypingStatus(false);
+
+        return Mono.empty().then();
     }
 
 }

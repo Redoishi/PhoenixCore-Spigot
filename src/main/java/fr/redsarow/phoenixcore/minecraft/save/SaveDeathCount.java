@@ -14,6 +14,7 @@ import java.util.Set;
 import static fr.redsarow.phoenixcore.minecraft.save.Save.initFile;
 
 /**
+ * @deprecated
  * @author redsarow
  * @since 1.0
  */

@@ -15,16 +15,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Criterias;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,6 +42,9 @@ public final class PhoenixCore extends JavaPlugin {
     public GetConfig CONFIG;
     public Bot discordBot;
 
+    /**
+     * @deprecated
+     */
     private SaveDeathCount playerDeathCount;
     private SaveGrantedPlayer grantedPlayer;
     private static Logger LOGGER;
@@ -55,13 +56,19 @@ public final class PhoenixCore extends JavaPlugin {
             LOGGER = getLogger();
             i18n = new I18n(this.getClass(), "phoenixCoreLangMinecraft", Locale.FRENCH, Locale.ENGLISH);
 
-            DEFAULT_PLUGIN_SCOREBOARD = getServer().getScoreboardManager().getNewScoreboard();
-            Objective objectiveHealth = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("vie", "health", "vie");
-            objectiveHealth.setDisplaySlot(DisplaySlot.PLAYER_LIST);
-            objectiveHealth.setDisplayName("vie");
-            Objective objectiveDeath = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("Mort", "dummy", "Mort");
-            objectiveDeath.setDisplaySlot(DisplaySlot.SIDEBAR);
-            objectiveDeath.setDisplayName(ChatColor.RED + "Mort");
+//            DEFAULT_PLUGIN_SCOREBOARD = getServer().getScoreboardManager().getNewScoreboard();
+            DEFAULT_PLUGIN_SCOREBOARD = getServer().getScoreboardManager().getMainScoreboard();
+            if(DEFAULT_PLUGIN_SCOREBOARD.getObjective("Vie") == null){
+                Objective objectiveHealth = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("Vie", Criterias.HEALTH, "vie");
+                objectiveHealth.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+                objectiveHealth.setDisplayName(ChatColor.GREEN + "vie");
+            }
+            Objective objectiveDeath = DEFAULT_PLUGIN_SCOREBOARD.getObjective("Mort");
+            if(objectiveDeath == null){
+                objectiveDeath = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("Mort", Criterias.DEATHS, "Mort");
+                objectiveDeath.setDisplaySlot(DisplaySlot.SIDEBAR);
+                objectiveDeath.setDisplayName(ChatColor.RED + "Mort");
+            }
 
             getLogger().info(i18n.get("init.config"));
             if (!Config.checkConfig(this, "config.yml", "")) {
@@ -80,12 +87,12 @@ public final class PhoenixCore extends JavaPlugin {
             SavePlayerWorldParam playerWorldParam = new SavePlayerWorldParam(this);
 
             getLogger().info(i18n.get("init.playerDeathCount"));
-            playerDeathCount = new SaveDeathCount(this);
-            Map<String, Integer> allPlayerDeath = playerDeathCount.getAll();
-            allPlayerDeath.forEach((s, integer) -> objectiveDeath.getScore(
-                    Bukkit.getOfflinePlayer(UUID.fromString(s)).getName())
-                    .setScore(integer)
-            );
+//            playerDeathCount = new SaveDeathCount(this);
+//            Map<String, Integer> allPlayerDeath = playerDeathCount.getAll();
+//            allPlayerDeath.forEach((s, integer) -> objectiveDeath.getScore(
+//                    Bukkit.getOfflinePlayer(UUID.fromString(s)).getName())
+//                    .setScore(integer)
+//            );
 
             getLogger().info(i18n.get("init.saveGrantedPlayer"));
             grantedPlayer = new SaveGrantedPlayer(this, playerDeathCount, objectiveDeath);
@@ -133,8 +140,17 @@ public final class PhoenixCore extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public SaveDeathCount getPlayerDeathCount() {
-        return playerDeathCount;
+    public Map<String, Integer> getPlayerDeathCount() {
+//        return playerDeathCount;
+        Map<String, Integer> allDeath = new HashMap<>();
+        Objective objectiveDeath = DEFAULT_PLUGIN_SCOREBOARD.getObjective("Mort");
+        Arrays.stream(getServer().getOfflinePlayers())
+                .forEach(offlinePlayer -> {
+                    int score = objectiveDeath.getScore(offlinePlayer.getName()).getScore();
+                    allDeath.put(offlinePlayer.getUniqueId().toString(), score);
+                });
+
+        return allDeath;
     }
 
     public void addGrant(String sender, String newPlayer) {
@@ -142,11 +158,11 @@ public final class PhoenixCore extends JavaPlugin {
             grantedPlayer.addGranted(Bukkit.getOfflinePlayer(waitGranted.get(newPlayer)));
 
             String msg = i18n.get("msg.addGrant"
-                    ,Color.INFO + newPlayer + Color.OK
+                    , Color.INFO + newPlayer + Color.OK
                     , Color.INFO + sender + Color.OK);
             getServer().broadcastMessage(msg);
             String discordMsg = i18n.get("msg.addGrant"
-                    ,newPlayer
+                    , newPlayer
                     , sender);
             discordBot.getSendMessage().sendNewGrantedPlayer(discordMsg);
 

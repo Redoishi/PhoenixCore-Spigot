@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +38,10 @@ public class Death implements Listener {
         Player player = event.getEntity();
         World world = player.getWorld();
         WorldGroup worldGroup = WorldGroup.findWorldGroupByWorldName(world.getName());
-        if(worldGroup.isDeadCount()){
-            int increment = playerDeathCount.increment(player);
-            objectiveDeath.getScore(player.getDisplayName()).setScore(increment);
+        if(!worldGroup.isDeadCount()){
+//            int increment = playerDeathCount.increment(player);
+            Score score = objectiveDeath.getScore(player.getDisplayName());
+            score.setScore(score.getScore());
         }
 
         pl.discordBot.getSendMessage().sendDeath(world.getName()+"\n"+event.getDeathMessage());

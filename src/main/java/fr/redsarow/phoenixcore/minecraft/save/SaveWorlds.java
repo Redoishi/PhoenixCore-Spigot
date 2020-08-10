@@ -110,14 +110,17 @@ public class SaveWorlds {
     public void loadWorldofGroupe(String group) {
         WorldGroup worldGroup = new WorldGroup(group);
         if (configFile.get(group + "." + DEFAULT_TEAM) != null) {
-            Team team = pl.DEFAULT_PLUGIN_SCOREBOARD.registerNewTeam(group);
+            Team team = pl.DEFAULT_PLUGIN_SCOREBOARD.getTeam(group);
+            if(team == null){
+                team = pl.DEFAULT_PLUGIN_SCOREBOARD.registerNewTeam(group);
+            }
 
             ChatColor chatColor = ChatColor.valueOf(configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_COLOR));
 //            pl.getLogger().info(chatColor.getClass() + "");
 //            pl.getLogger().info(chatColor + "");
-//            team.setColor(chatColor == null ? ChatColor.RESET : chatColor);//TODO bug color
+            team.setColor(chatColor);//TODO bug color
 
-            team.setPrefix(chatColor + configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_PREFIX, "") + " ");
+            team.setPrefix(chatColor + configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_PREFIX, ""));
             team.setSuffix("" + ChatColor.RESET);
             worldGroup.setTeam(team);
         }
@@ -137,12 +140,16 @@ public class SaveWorlds {
             }
             Team team = null;
             if (configFile.get(group + "." + TEAM + "." + s) != null) {
-                team = pl.DEFAULT_PLUGIN_SCOREBOARD.registerNewTeam(s);
+                team = pl.DEFAULT_PLUGIN_SCOREBOARD.getTeam(s);
+                if(team == null){
+                    team = pl.DEFAULT_PLUGIN_SCOREBOARD.registerNewTeam(s);
+                }
+
 
                 ChatColor chatColor = ChatColor.valueOf(configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_COLOR));
 
-//                team.setColor(ChatColor.valueOf(configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_COLOR)));
-                team.setPrefix(chatColor + configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_PREFIX, "") + " ");
+                team.setColor(chatColor);
+                team.setPrefix(chatColor + configFile.getString(group + "." + TEAM + "." + s + "." + TEAM_PREFIX, ""));
                 team.setSuffix("" + ChatColor.RESET);
             }
             worldGroup.setWorldTeam(s, team);

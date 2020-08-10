@@ -1,11 +1,10 @@
 package fr.redsarow.phoenixcore.discord.command;
 
+import discord4j.core.object.entity.Message;
+import discord4j.rest.util.Color;
 import fr.redsarow.phoenixcore.discord.Bot;
 import org.bukkit.Bukkit;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.EmbedBuilder;
 
-import java.awt.*;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,8 +24,8 @@ public class DeathCount extends ACommand {
     }
 
     @Override
-    public boolean run(IMessage message) {
-        Map<String, Integer> allDeath = bot.getPlugin().getPlayerDeathCount().getAll();
+    public boolean run(Message message) {
+        Map<String, Integer> allDeath = bot.getPlugin().getPlayerDeathCount();
         StringBuilder names = new StringBuilder();
         StringBuilder death = new StringBuilder();
         allDeath.forEach((s, integer) -> {
@@ -34,12 +33,12 @@ public class DeathCount extends ACommand {
             death.append(integer).append("\n");
         });
 
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.withTitle(":skull: Tableau des morts :skull:");
-        embedBuilder.withColor(Color.BLACK);
-        embedBuilder.appendField("Nom", names.toString().equals("")?"N/C":names.toString(), true);
-        embedBuilder.appendField("Mort(s)", death.toString().equals("")?"N/C":death.toString(), true);
-        message.getChannel().sendMessage(embedBuilder.build());
+        message.getChannel().block().createEmbed(embed ->
+                embed.setTitle(":skull: Tableau des morts :skull:")
+                        .setColor(Color.BLACK)
+                        .addField("Nom", names.toString().equals("")?"N/C":names.toString(), true)
+                        .addField("Mort(s)", death.toString().equals("")?"N/C":death.toString(), true)
+        );
 
         return true;
     }

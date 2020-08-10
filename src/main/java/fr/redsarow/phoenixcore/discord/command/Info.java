@@ -1,12 +1,9 @@
 package fr.redsarow.phoenixcore.discord.command;
 
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.rest.util.Color;
 import fr.redsarow.phoenixcore.discord.Bot;
-import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.EmbedBuilder;
-
-import java.awt.*;
 
 import static fr.redsarow.phoenixcore.discord.Bot.PREFIX;
 
@@ -21,21 +18,17 @@ public class Info extends ACommand {
     }
 
     @Override
-    public boolean run(IMessage message) {
-        IUser client = Bot.getClient().getOurUser();
-        EmbedObject build = new EmbedBuilder()
-                .withAuthorName(client.getName())
-                .withAuthorIcon(client.getAvatarURL())
-                .withThumbnail(client.getAvatarURL())
+    public boolean run(Message message) {
+        User client = Bot.getClient().getSelf().block();
 
-                .withDesc(client.mention()+" créer par redsarow")
-                .appendField("Link","[github](https://github.com/redsarow)",false)
-                .withFooterText(PREFIX+"help")
-
-                .withColor(Color.WHITE)
-
-                .build();
-        message.getChannel().sendMessage(build);
+        message.getChannel().block().createEmbed(embed ->
+                embed.setAuthor(client.getUsername(), null, client.getAvatarUrl())
+                .setThumbnail(client.getAvatarUrl())
+                .setDescription(client.getMention()+" créer par redsarow")
+                .addField("Link","[github](https://github.com/redsarow)",false)
+                .setFooter(PREFIX+"help", null)
+                .setColor(Color.WHITE)
+        );
         return true;
     }
 }

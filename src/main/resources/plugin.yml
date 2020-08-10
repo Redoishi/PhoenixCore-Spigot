@@ -4,3 +4,5 @@ main: ${mainClass}
 prefix: PC
 author: ${author}
 description: ${project.description}
+depend:
+  - Mi18nAPI

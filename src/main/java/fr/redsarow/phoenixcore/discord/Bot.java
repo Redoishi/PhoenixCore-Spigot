@@ -1,21 +1,18 @@
 package fr.redsarow.phoenixcore.discord;
 
+import discord4j.core.DiscordClientBuilder;
+import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.EventDispatcher;
+import discord4j.core.event.domain.lifecycle.ReadyEvent;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.channel.Channel;
+import discord4j.core.object.entity.channel.GuildChannel;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Presence;
 import fr.redsarow.mi18n.api.I18n;
 import fr.redsarow.phoenixcore.PhoenixCore;
-import fr.redsarow.phoenixcore.discord.command.DeathCount;
-import fr.redsarow.phoenixcore.discord.command.Grant;
-import fr.redsarow.phoenixcore.discord.command.Help;
-import fr.redsarow.phoenixcore.discord.command.Info;
-import fr.redsarow.phoenixcore.discord.listener.TryCommand;
-import sx.blah.discord.api.ClientBuilder;
-import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.api.events.EventDispatcher;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.obj.ActivityType;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.StatusType;
-import sx.blah.discord.util.DiscordException;
+import fr.redsarow.phoenixcore.discord.command.*;
+import reactor.core.publisher.Mono;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -33,11 +30,11 @@ public class Bot {
     public static String PREFIX;
     public static List<String> ROLES;
 
-    private static IDiscordClient client;
+    private static GatewayDiscordClient client;
     private static I18n i18n;
 
-    private IChannel channelOut;
-    private List<IChannel> channelIn;
+    private Channel channelOut;
+    private List<Channel> channelIn;
 
     private final PhoenixCore plugin;
     private final SendMessage sendMessage;
@@ -49,12 +46,20 @@ public class Bot {
         PREFIX = plugin.CONFIG.getStringVal("prefix");
         ROLES = plugin.CONFIG.getStringListVal("roles");
 
-        client = createClient(plugin.CONFIG.getStringVal("token"), true);
+        createClient(plugin.CONFIG.getStringVal("token"));
 
-        //event
-        EventDispatcher dispatcher = client.getDispatcher();
-        dispatcher.registerListener(new TryCommand(this));
-        dispatcher.registerListener(this);
+        // events
+        EventDispatcher dispatcher = client.getEventDispatcher();
+        dispatcher.on(MessageCreateEvent.class)
+                .map(MessageCreateEvent::getMessage)
+                .filter(msg -> msg.getAuthor().map(user -> !user.isBot()).orElse(false))
+                .filter(msg -> getChannelIn().contains(msg.getChannel().block()))
+                .filter(msg -> msg.getContent().startsWith(Bot.PREFIX))
+                .flatMap(CommandManagement::run)
+                .subscribe();
+
+        dispatcher.on(ReadyEvent.class)
+                .subscribe(this::onReady);
 
         //command
         new Info();
@@ -65,31 +70,29 @@ public class Bot {
         sendMessage = new SendMessage(this);
     }
 
-    private IDiscordClient createClient(String token, boolean login) {
-        ClientBuilder clientBuilder = new ClientBuilder();
-        clientBuilder.withToken(token);
-        clientBuilder.setPresence(StatusType.ONLINE, ActivityType.PLAYING, PREFIX + "help");
-
-        try {
-            if (login) {
-                return clientBuilder.login();
-            } else {
-                return clientBuilder.build();
-            }
-        } catch (DiscordException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private void createClient(String token) {
+        client = DiscordClientBuilder.create("token")
+                .build()
+                .gateway()
+                .setInitialStatus(s -> Presence.doNotDisturb(Activity.playing("Init ...")))
+                .login()
+                .block();
     }
 
-    @EventSubscriber
-    public void onReady(ReadyEvent event) {
-        List<IChannel> channels = client.getGuilds().get(0).getChannels();
+    public Mono<Void> onReady(ReadyEvent event) {
+
+        List<GuildChannel> channels = client.getGuilds()
+                .toStream()
+                .findFirst()
+                .get()
+                .getChannels()
+                .collectList()
+                .block();
 
         List<String> stringChannels = plugin.CONFIG.getStringListVal("channel.in");
 
         channelIn = stringChannels.stream().collect(
-                ArrayList<IChannel>::new
+                ArrayList<Channel>::new
                 , (channels1, s) -> channels1.add(channels.stream().filter(channel -> channel.getName().equalsIgnoreCase(s)).findFirst().get())
                 , ArrayList::addAll
         );
@@ -98,17 +101,21 @@ public class Bot {
         channelOut = channels.stream().filter(channel -> channel.getName().equalsIgnoreCase(stringChannel)).findFirst().get();
 
         System.out.println("Bot is now ready!");
+        // set status
+        client.updatePresence(Presence.online(Activity.playing( PREFIX + "help")));
+
+        return Mono.empty().then();
     }
 
-    public static IDiscordClient getClient() {
+    public static GatewayDiscordClient getClient() {
         return client;
     }
 
-    public IChannel getChannelOut() {
+    public Channel getChannelOut() {
         return channelOut;
     }
 
-    public List<IChannel> getChannelIn() {
+    public List<Channel> getChannelIn() {
         return channelIn;
     }
 

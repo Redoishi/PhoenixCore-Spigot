@@ -1,9 +1,8 @@
 package fr.redsarow.phoenixcore.discord.command;
 
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.EmbedBuilder;
-
-import java.awt.*;
+import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.rest.util.Color;
 
 import static fr.redsarow.phoenixcore.discord.Bot.PREFIX;
 
@@ -18,35 +17,39 @@ public class Help extends ACommand {
     }
 
     @Override
-    public boolean run(IMessage message) {
+    public boolean run(Message message) {
         String[] msgContent = message.getContent().split(" ");
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.withTitle(":question: Help");
-        embedBuilder.withDesc("Prefix des commande: " + PREFIX);
-        embedBuilder.withColor(Color.WHITE);
+
+        EmbedCreateSpec embed = new EmbedCreateSpec()
+                .setTitle(":question: Help")
+                .setColor(Color.RED);
+
+        StringBuilder desc = new StringBuilder("Prefix des commande: ").append(PREFIX);
 
         if (msgContent.length < 2) {
-            embedBuilder.appendDesc("\nListe des commandes");
-            helpAllCommand(embedBuilder);
+            desc.append("\nListe des commandes");
+            helpAllCommand(embed);
         } else {
-            embedBuilder.appendDesc("\nAide pour " + msgContent[1]);
+            desc.append("\nAide pour ").append(msgContent[1]);
             ACommand command = CommandManagement.getCommand(msgContent[1]);
             if (command == null) {
-                message.getChannel().sendMessage("La commande : " + msgContent[1] + "est inconnue!");
+                message.getChannel().block().createMessage("La commande : " + msgContent[1] + "est inconnue!");
                 return true;
             }
-            embedBuilder.appendField("Nom", command.getName(), true);
-            embedBuilder.appendField("Description", command.getDescription(), true);
-            embedBuilder.appendField("Usage", command.getUsage(), true);
-            embedBuilder.appendField("Exemple", command.getExemple().toString(), true);
-            embedBuilder.appendField("Alias", command.getAlias(), true);
+            embed.addField("Nom", command.getName(), false);
+            embed.addField("Description", command.getDescription(), true);
+            embed.addField("Usage", command.getUsage(), false);
+            embed.addField("Exemple", command.getExemple().toString(), true);
+            embed.addField("Alias", command.getAlias(), false);
         }
 
-        message.getChannel().sendMessage(embedBuilder.build());
+        embed.setDescription(desc.toString());
+        message.getChannel()
+                .block().createEmbed(embedCreateSpec -> embedCreateSpec = embed);
         return true;
     }
 
-    private void helpAllCommand(EmbedBuilder embedBuilder) {
+    private void helpAllCommand(EmbedCreateSpec embed) {
         StringBuilder names = new StringBuilder();
         StringBuilder descriptions = new StringBuilder();
         StringBuilder usage = new StringBuilder();
@@ -55,8 +58,8 @@ public class Help extends ACommand {
             descriptions.append(aCommand.getDescription()).append("\n");
             usage.append(aCommand.getUsage()).append("\n");
         });
-        embedBuilder.appendField("Nom", names.toString(), true);
-        embedBuilder.appendField("Description", descriptions.toString(), true);
-        embedBuilder.appendField("Usage", usage.toString(), true);
+        embed.addField("Nom", names.toString(), true);
+        embed.addField("Description", descriptions.toString(), true);
+        embed.addField("Usage", usage.toString(), true);
     }
 }

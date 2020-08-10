@@ -6,7 +6,7 @@
 
     <groupId>fr.redsarow</groupId>
     <artifactId>PhoenixCore</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>PhoenixCore</name>
@@ -35,13 +35,7 @@
         <!--spigot-->
         <repository>
             <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </repository>
-
-        <!--discord4J-->
-        <repository>
-            <id>jcenter</id>
-            <url>http://jcenter.bintray.com</url>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
         </repository>
 
         <!--Mi18nAPI-->
@@ -56,15 +50,15 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <!--discord4J-->
         <dependency>
             <groupId>com.discord4j</groupId>
-            <artifactId>Discord4J</artifactId>
-            <version>2.10.1</version>
+            <artifactId>discord4j-core</artifactId>
+            <version>3.1.0</version>
         </dependency>
 
         <!--Mi18nAPI-->
@@ -72,6 +66,7 @@
             <groupId>com.github.redsarow.Mi18n</groupId>
             <artifactId>Mi18nAPI</artifactId>
             <version>master-b1f0bd7892-1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -121,6 +116,34 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <!--<configuration>-->
+                            <!--<artifactSet>-->
+                                <!--<excludes>-->
+                                    <!--<exclude>classworlds:classworlds</exclude>-->
+                                    <!--<exclude>junit:junit</exclude>-->
+                                    <!--<exclude>jmock:*</exclude>-->
+                                    <!--<exclude>*:xml-apis</exclude>-->
+                                    <!--<exclude>org.apache.maven:lib:tests</exclude>-->
+                                    <!--<exclude>log4j:log4j:jar:</exclude>-->
+                                <!--</excludes>-->
+                            <!--</artifactSet>-->
+                        <!--</configuration>-->
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>${project.artifactId}-${project.version}-shade</finalName>
                 </configuration>
             </plugin>
 
