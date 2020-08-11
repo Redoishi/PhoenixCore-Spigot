@@ -71,7 +71,7 @@ public class Bot {
     }
 
     private void createClient(String token) {
-        client = DiscordClientBuilder.create("token")
+        client = DiscordClientBuilder.create(token)
                 .build()
                 .gateway()
                 .setInitialStatus(s -> Presence.doNotDisturb(Activity.playing("Init ...")))
