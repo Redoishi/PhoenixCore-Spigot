@@ -80,14 +80,6 @@ public final class PhoenixCore extends JavaPlugin {
             getLogger().info(i18n.get("init.playerWorldParam"));
             SavePlayerWorldParam playerWorldParam = new SavePlayerWorldParam(this);
 
-            getLogger().info(i18n.get("init.playerDeathCount"));
-//            playerDeathCount = new SaveDeathCount(this);
-//            Map<String, Integer> allPlayerDeath = playerDeathCount.getAll();
-//            allPlayerDeath.forEach((s, integer) -> objectiveDeath.getScore(
-//                    Bukkit.getOfflinePlayer(UUID.fromString(s)).getName())
-//                    .setScore(integer)
-//            );
-
             getLogger().info(i18n.get("init.saveGrantedPlayer"));
             grantedPlayer = new SaveGrantedPlayer(this, objectiveDeath);
 
@@ -119,8 +111,6 @@ public final class PhoenixCore extends JavaPlugin {
             if (CONFIG.getBoolVal("discord")) {
                 getLogger().info(i18n.get("init.discord"));
                 discordBot = new Bot(this);
-                //event
-//                pm.registerEvents(new (this), this);
             }
 
         } catch (Exception e) {
@@ -172,9 +162,5 @@ public final class PhoenixCore extends JavaPlugin {
 
     public static I18n getI18n() {
         return i18n;
-    }
-
-    public static Logger getLOGGER() {
-        return LOGGER;
     }
 }
