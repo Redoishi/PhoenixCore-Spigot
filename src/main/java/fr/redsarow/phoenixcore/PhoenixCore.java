@@ -42,10 +42,6 @@ public final class PhoenixCore extends JavaPlugin {
     public GetConfig CONFIG;
     public Bot discordBot;
 
-    /**
-     * @deprecated
-     */
-    private SaveDeathCount playerDeathCount;
     private SaveGrantedPlayer grantedPlayer;
     private static Logger LOGGER;
 
@@ -95,7 +91,7 @@ public final class PhoenixCore extends JavaPlugin {
 //            );
 
             getLogger().info(i18n.get("init.saveGrantedPlayer"));
-            grantedPlayer = new SaveGrantedPlayer(this, playerDeathCount, objectiveDeath);
+            grantedPlayer = new SaveGrantedPlayer(this, objectiveDeath);
 
 //TODO 1.13
             SavePlayerInformation savePlayerInformation = new SavePlayerInformation(this);
@@ -107,7 +103,7 @@ public final class PhoenixCore extends JavaPlugin {
             pm.registerEvents(new Join(this, grantedPlayer), this);
             pm.registerEvents(new Leave(this), this);
             pm.registerEvents(new PlayerWorldChange(this), this);
-            pm.registerEvents(new Death(this, playerDeathCount, objectiveDeath), this);
+            pm.registerEvents(new Death(this, objectiveDeath), this);
             pm.registerEvents(new AdvancementDone(this), this);
 
 

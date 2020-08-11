@@ -2,7 +2,6 @@ package fr.redsarow.phoenixcore.minecraft.listener;
 
 import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.minecraft.WorldGroup;
-import fr.redsarow.phoenixcore.minecraft.save.SaveDeathCount;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,13 +22,11 @@ public class Death implements Listener {
 
     private final static Map<Player, WorldGroup> deathInGroup = new HashMap<>();
 
-    private SaveDeathCount playerDeathCount;
     private Objective objectiveDeath;
     PhoenixCore pl;
 
-    public Death(PhoenixCore phoenixCore, SaveDeathCount playerDeathCount, Objective objectiveDeath) {
+    public Death(PhoenixCore phoenixCore, Objective objectiveDeath) {
         this.pl = phoenixCore;
-        this.playerDeathCount = playerDeathCount;
         this.objectiveDeath = objectiveDeath;
     }
 

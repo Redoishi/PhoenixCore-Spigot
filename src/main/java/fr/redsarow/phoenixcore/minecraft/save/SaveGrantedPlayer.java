@@ -28,14 +28,12 @@ public class SaveGrantedPlayer {
     private File dataFolder;
     private File file;
     private PhoenixCore pl;
-    private SaveDeathCount playerDeathCount;
     private Objective objectiveDeath;
     private YamlConfiguration configFile;
     private List<UUID> granted;
 
-    public SaveGrantedPlayer(PhoenixCore phoenixCore, SaveDeathCount playerDeathCount, Objective objectiveDeath) throws IOException {
+    public SaveGrantedPlayer(PhoenixCore phoenixCore, Objective objectiveDeath) throws IOException {
         this.pl = phoenixCore;
-        this.playerDeathCount = playerDeathCount;
         this.objectiveDeath = objectiveDeath;
         this.pl.getLogger().info("save " + FILE);
 
@@ -56,7 +54,6 @@ public class SaveGrantedPlayer {
         UUID uuid = offlinePlayer.getUniqueId();
         setSectionVal(configFile, uuid.toString(), offlinePlayer.getName());
         granted.add(uuid);
-//        playerDeathCount.initPlayer(offlinePlayer);
         objectiveDeath.getScore(offlinePlayer.getName()).setScore(0);
 
         PhoenixCore.waitGranted.remove(offlinePlayer.getName());
