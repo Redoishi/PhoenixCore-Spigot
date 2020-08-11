@@ -80,7 +80,8 @@ public class Bot {
     }
 
     public void disconnect(){
-        client.onDisconnect().block();
+        client.updatePresence(Presence.doNotDisturb(Activity.playing( "disconnect"))).block();
+        client.onDisconnect().subscribe();
     }
 
     private Mono<Void> onReady(ReadyEvent event) {
@@ -106,7 +107,7 @@ public class Bot {
 
         System.out.println("Bot is now ready!");
         // set status
-        client.updatePresence(Presence.online(Activity.playing( PREFIX + "help")));
+        client.updatePresence(Presence.online(Activity.playing( PREFIX + "help"))).block();
 
         return Mono.empty().then();
     }

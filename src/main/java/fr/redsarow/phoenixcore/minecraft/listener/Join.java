@@ -46,6 +46,8 @@ public class Join implements Listener {
         if (team != null) {
             team.addEntry(player.getName());
         }
+
+        // TODO useless ??
         if (group.isScoreboard()) {
             player.setScoreboard(pl.DEFAULT_PLUGIN_SCOREBOARD);
         }else {
@@ -53,7 +55,7 @@ public class Join implements Listener {
         }
 
         UUID uniqueId = player.getUniqueId();
-        if (!grantedPlayer.isGranted(uniqueId)) {
+        if (!grantedPlayer.isGranted(uniqueId)) { // if no granted
             String playerName = player.getName();
             player.setGameMode(GameMode.SPECTATOR);
             PhoenixCore.waitGranted.put(playerName, uniqueId);

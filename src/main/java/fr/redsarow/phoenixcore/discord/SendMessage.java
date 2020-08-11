@@ -30,7 +30,7 @@ public class SendMessage {
                 .setTitle(":skull_crossbones: Mort :skull_crossbones:")
                 .setColor(Color.RED)
                 .setDescription(msg);
-        restChannel.createMessage(embed.asRequest());
+        restChannel.createMessage(embed.asRequest()).block();
     }
 
     public void sendAdvancement(String msg){
@@ -38,7 +38,7 @@ public class SendMessage {
                 .setTitle(":100: Advancement Get")
                 .setColor(Color.BLUE)
                 .setDescription(msg);
-        restChannel.createMessage(embed.asRequest());
+        restChannel.createMessage(embed.asRequest()).block();
     }
 
     public void sendNotGrantedPlayer(String msg, String playername){
@@ -46,7 +46,7 @@ public class SendMessage {
                 .setTitle(":warning: Joueur non connue!")
                 .setColor(Color.ORANGE)
                 .setDescription(msg + " \n Utiliser: " + PREFIX + "grant " + playername);
-        restChannel.createMessage(embed.asRequest());
+        restChannel.createMessage(embed.asRequest()).block();
     }
 
     public void sendNewGrantedPlayer(String msg){
@@ -54,7 +54,7 @@ public class SendMessage {
                 .setTitle(":white_check_mark:  Nouveau joueur\"")
                 .setColor(Color.GREEN)
                 .setDescription(msg);
-        restChannel.createMessage(embed.asRequest());
+        restChannel.createMessage(embed.asRequest()).block();
     }
 
 }

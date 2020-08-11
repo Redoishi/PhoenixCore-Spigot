@@ -56,14 +56,14 @@ public class CommandManagement {
             try {
                 boolean run = command.run(message);
                 if(!run){
-                    messageChannel.createMessage(":x: " + command.getUsage());
+                    messageChannel.createMessage(":x: " + command.getUsage()).block();
                 }
             } catch (Exception e) {
-                messageChannel.createMessage("L'exécution de la commande: " + command.getName() + " a subit une erreur");
+                messageChannel.createMessage("L'exécution de la commande: " + command.getName() + " a subit une erreur").block();
                 e.printStackTrace();
             }
         }else{
-            messageChannel.createMessage("La commande : " + msgContent[0] + " est inconnue!");
+            messageChannel.createMessage("La commande : " + msgContent[0] + " est inconnue!").block();
         }
 //        messageChannel.setTypingStatus(false);
 

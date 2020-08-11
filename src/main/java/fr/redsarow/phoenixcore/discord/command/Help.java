@@ -45,7 +45,10 @@ public class Help extends ACommand {
 
         embed.setDescription(desc.toString());
         message.getChannel()
-                .block().createEmbed(embedCreateSpec -> embedCreateSpec = embed);
+                .block()
+                .getRestChannel()
+                .createMessage(embed.asRequest())
+                .block();
         return true;
     }
 

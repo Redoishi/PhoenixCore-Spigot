@@ -38,7 +38,7 @@ public class DeathCount extends ACommand {
                         .setColor(Color.BLACK)
                         .addField("Nom", names.toString().equals("")?"N/C":names.toString(), true)
                         .addField("Mort(s)", death.toString().equals("")?"N/C":death.toString(), true)
-        );
+        ).block();
 
         return true;
     }

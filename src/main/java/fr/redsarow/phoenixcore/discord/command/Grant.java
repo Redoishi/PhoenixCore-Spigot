@@ -30,7 +30,7 @@ public class Grant extends ACommand {
 
         boolean userOk = mbr.getRoles().any(iRole -> ROLES.contains(iRole.getName())).block();
         if(!userOk){
-            message.getChannel().block().createMessage(":x: Non autoriser");
+            message.getChannel().block().createMessage(":x: Non autoriser").block();
             return true;
         }
         bot.getPlugin().addGrant(mbr.getMention(), msgContent[1]);

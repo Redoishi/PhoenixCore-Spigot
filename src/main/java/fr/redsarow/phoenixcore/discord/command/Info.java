@@ -28,7 +28,7 @@ public class Info extends ACommand {
                 .addField("Link","[github](https://github.com/redsarow)",false)
                 .setFooter(PREFIX+"help", null)
                 .setColor(Color.WHITE)
-        );
+        ).block();
         return true;
     }
 }

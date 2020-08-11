@@ -20,7 +20,7 @@ public class AdvancementDone implements Listener {
     }
 
     @EventHandler
-    public void onDeath(PlayerAdvancementDoneEvent event) {
+    public void onDeath(PlayerAdvancementDoneEvent event) {// TODO block si pas bon world
         Advancement advancement = event.getAdvancement();
         String nomInterne = advancement.getKey().getKey();
         if (nomInterne.startsWith("recipes")) {
