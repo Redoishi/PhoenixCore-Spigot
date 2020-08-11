@@ -79,7 +79,11 @@ public class Bot {
                 .block();
     }
 
-    public Mono<Void> onReady(ReadyEvent event) {
+    public void disconnect(){
+        client.onDisconnect().block();
+    }
+
+    private Mono<Void> onReady(ReadyEvent event) {
 
         List<GuildChannel> channels = client.getGuilds()
                 .toStream()
