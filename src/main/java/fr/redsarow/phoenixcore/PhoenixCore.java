@@ -15,10 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Criterias;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -58,6 +55,7 @@ public final class PhoenixCore extends JavaPlugin {
                 Objective objectiveHealth = DEFAULT_PLUGIN_SCOREBOARD.registerNewObjective("Vie", Criterias.HEALTH, "vie");
                 objectiveHealth.setDisplaySlot(DisplaySlot.PLAYER_LIST);
                 objectiveHealth.setDisplayName(ChatColor.GREEN + "vie");
+                objectiveHealth.setRenderType(RenderType.HEARTS);
             }
             Objective objectiveDeath = DEFAULT_PLUGIN_SCOREBOARD.getObjective("Mort");
             if(objectiveDeath == null){
@@ -133,7 +131,9 @@ public final class PhoenixCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        if(discordBot != null){
+            discordBot.disconnect();
+        }
     }
 
     public Map<String, Integer> getPlayerDeathCount() {
