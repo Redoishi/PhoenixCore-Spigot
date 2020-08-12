@@ -7,7 +7,6 @@ import fr.redsarow.phoenixcore.minecraft.save.SaveWorlds;
 import fr.redsarow.phoenixcore.minecraft.util.Color;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,23 +14,23 @@ import org.bukkit.entity.Player;
  * @author redsarow
  * @since 1.0
  */
-public class RmGroup extends AMyCommand {
+public class RmGroup extends AMyCommand<PhoenixCore> {
 
     private SaveWorlds saveWorlds;
     private SavePlayerWorldParam playerWorldParam;
 
-    public RmGroup(PhoenixCore phoenixCore, CommandMap commandMap, SaveWorlds saveWorlds, SavePlayerWorldParam playerWorldParam) {
+    public RmGroup(PhoenixCore phoenixCore, SaveWorlds saveWorlds, SavePlayerWorldParam playerWorldParam) {
         super(phoenixCore, "RmGroup");
         this.saveWorlds = saveWorlds;
         this.playerWorldParam = playerWorldParam;
-        addDescription("sup group");
-        addUsage("/RmGroup <WorldGroup>");
-        addAliases("rg");
+        setDescription("sup group");
+        setUsage("/RmGroup <WorldGroup>");
+        setAliases("rg");
 
         String tabComplete[] = WorldGroup.getListNameGroups().toArray(new String[0]);
-        addListTabbComplete(0, tabComplete);
+        addTabbComplete(0, tabComplete);
 
-        registerCommand(commandMap);
+        registerCommand();
     }
 
     @Override

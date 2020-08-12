@@ -1,9 +1,11 @@
 package fr.redsarow.phoenixcore.minecraft.command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,9 +17,21 @@ import java.util.stream.Collectors;
  */
 public abstract class AMyCommand<T extends JavaPlugin> extends Command implements CommandExecutor, PluginIdentifiableCommand {
 
-    private T plugin;
+    private static CommandMap commandMap;
+
+    static {
+        try {
+            Field f = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            f.setAccessible(true);
+            commandMap = (CommandMap) f.get(Bukkit.getServer());
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private final T plugin;
+    private final HashMap<Integer, ArrayList<TabCommand>> tabComplete;
     private boolean register = false;
-    private HashMap<Integer, ArrayList<TabCommand>> tabComplete;
 
 
     /**
@@ -27,8 +41,8 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
     AMyCommand(T plugin, String name) {
         super(name);
 
+        assert commandMap != null;
         assert plugin != null;
-        assert name != null;
         assert name.length() > 0;
 
         setLabel(name);
@@ -37,64 +51,17 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
     }
 
 
-    //<editor-fold desc="add">
-    /**
-     * @param description description of the command
-     *
-     * @return AMyCommand, instance of the class
-     */
-    protected AMyCommand addDescription(String description) {
-        if (register || description != null)
-            setDescription(description);
-        return this;
-    }
-
-    /**
-     * @param use use of the command (ex: /myCmd [val1]
-     *
-     * @return AMyCommand, instance of the class
-     */
-    protected AMyCommand addUsage(String use) {
-        if (register || use != null)
-            setUsage(use);
-        return this;
-    }
+    //<editor-fold desc="add / set">
 
     /**
      * @param aliases aliases of the command.
-     *
-     * @return AMyCommand, instance of the class
      */
-    protected AMyCommand addAliases(String... aliases) {
+    protected void setAliases(String... aliases) {
         if (aliases != null && (register || aliases.length > 0))
             setAliases(Arrays.stream(aliases).collect(Collectors.toList()));
-        return this;
     }
 
     //<editor-fold desc="TabbComplete">
-    /**
-     * Adds an argument to an index with permission and the words before
-     *
-     * @param indice     index where the argument is in the command. /myCmd is at the index -1, so
-     *                   /myCmd index0 index1 ...
-     * @param permission permission to add (may be null)
-     * @param arg        word to add
-     * @param beforeText text preceding the argument (may be null)
-     *
-     * @return AMyCommand, instance of the class
-     */
-    protected AMyCommand addOneTabbComplete(int indice, String permission, String arg, String... beforeText) {
-        if (arg != null && indice >= 0) {
-            if (tabComplete.containsKey(indice)) {
-                tabComplete.get(indice).add(new TabCommand(indice, arg, permission, beforeText));
-            } else {
-                ArrayList<TabCommand> tabCommands = new ArrayList<>();
-                tabCommands.add(new TabCommand(indice, arg, permission, beforeText));
-                tabComplete.put(indice, tabCommands);
-            }
-        }
-        return this;
-    }
 
     /**
      * Add multiple arguments to an index with permission and words before
@@ -102,19 +69,17 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
      * @param indice     index where the argument is in the command. /myCmd is at the index -1, so
      *                   /myCmd index0 index1 ...
      * @param permission permission to add (may be null)
-     * @param arg        mots à ajouter
      * @param beforeText text preceding the argument (may be null)
-     *
-     * @return AMyCommand, instance of the class
+     * @param arg        word to add
      */
-    protected AMyCommand addListTabbComplete(int indice, String permission, String[] beforeText, String... arg) {
+    protected void addTabbComplete(int indice, String permission, String[] beforeText, String... arg) {
         if (arg != null && arg.length > 0 && indice >= 0) {
             if (tabComplete.containsKey(indice)) {
                 tabComplete.get(indice).addAll(Arrays.stream(arg).collect(
                         ArrayList::new,
                         (tabCommands, s) -> tabCommands.add(new TabCommand(indice, s, permission, beforeText)),
                         ArrayList::addAll));
-            } else {
+            }else {
                 tabComplete.put(indice, Arrays.stream(arg).collect(
                         ArrayList::new,
                         (tabCommands, s) -> tabCommands.add(new TabCommand(indice, s, permission, beforeText)),
@@ -122,7 +87,6 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
                 );
             }
         }
-        return this;
     }
 
     /**
@@ -130,60 +94,28 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
      *
      * @param indice index where the argument is in the command. /myCmd is at the index -1, so
      *               /myCmd index0 index1 ...
-     * @param arg    mots à ajouter
-     *
-     * @return AMyCommand, instance of the class
+     * @param arg    word to add
      */
-    protected AMyCommand addListTabbComplete(int indice, String... arg) {
-        if (arg != null && arg.length > 0 && indice >= 0) {
-            addListTabbComplete(indice, null, null, arg);
-        }
-        return this;
+    protected void addTabbComplete(int indice, String... arg) {
+        addTabbComplete(indice, null, null, arg);
     }
     //</editor-fold>
-
-    /**
-     * add permission to command
-     *
-     * @param permission permission to add (may be null)
-     *
-     * @return AMyCommand, instance of the class
-     */
-    protected AMyCommand addPermission(String permission) {
-        if (register || permission != null)
-            setPermission(permission);
-        return this;
-    }
-
-    /**
-     * @param permissionMessage message if the player does not have permission
-     *
-     * @return AMyCommand, instance of the class
-     */
-    protected AMyCommand addPermissionMessage(String permissionMessage) {
-        if (register || permissionMessage != null)
-            setPermissionMessage(permissionMessage);
-        return this;
-    }
     //</editor-fold>
 
     /**
      * /!\ to do at the end /!\ to save the command.
      *
-     * @param commandMap via:<br/>
-     *                   <code>
-     *                   Field f = Bukkit.getServer().getClass().getDeclaredField("commandMap");<br/>
-     *                   f.setAccessible(true);<br/>
-     *                   CommandMap commandMap = (CommandMap) f.get(Bukkit.getServer());
-     *                   </code>
-     *
      * @return true if the command has been successfully registered
      */
-    protected boolean registerCommand(CommandMap commandMap) {
-        return register ? false : commandMap.register("", this);
+    protected boolean registerCommand() {
+        if (!register) {
+            register = commandMap.register(plugin.getName(), this);// TODO Test
+        }
+        return register;
     }
 
     //<editor-fold desc="get">
+
     /**
      * @return plugin responsible for the command
      */
@@ -202,6 +134,7 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
 
 
     //<editor-fold desc="Override">
+
     /**
      * @param commandSender sender
      * @param command       command
@@ -215,7 +148,7 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
             if (!commandSender.hasPermission(getPermission())) {
                 if (getPermissionMessage() == null) {
                     commandSender.sendMessage(ChatColor.RED + "no permit!");
-                } else {
+                }else {
                     commandSender.sendMessage(getPermissionMessage());
                 }
                 return false;
@@ -230,8 +163,8 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
 
     /**
      * @param sender sender
-     * @param alias alias used
-     * @param args argument of the command
+     * @param alias  alias used
+     * @param args   argument of the command
      *
      * @return a list of possible values
      */
@@ -243,11 +176,13 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
         if ((getPermission() != null && !sender.hasPermission(getPermission())) || tabComplete.size() == 0 || !tabComplete.containsKey(indice))
             return super.tabComplete(sender, alias, args);
 
-        ArrayList<String> list = tabComplete.get(indice).stream().filter(tabCommand ->
-                (tabCommand.getTextAvant() == null || tabCommand.getTextAvant().contains(args[indice - 1])) &&
-                        (tabCommand.getPermission() == null || sender.hasPermission(tabCommand.getPermission())) &&
-                        (tabCommand.getText().startsWith(args[indice]))
-        ).map(TabCommand::getText).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        List<String> list = tabComplete.get(indice).stream()
+                .filter(tabCommand -> tabCommand.getTextAvant() == null || tabCommand.getTextAvant().contains(args[indice - 1]))
+                .filter(tabCommand -> tabCommand.getPermission() == null || sender.hasPermission(tabCommand.getPermission()))
+                .filter(tabCommand -> tabCommand.getText().startsWith(args[indice]))
+                .map(TabCommand::getText)
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.toList());
 
         return list.size() < 1 ? super.tabComplete(sender, alias, args) : list;
 
@@ -255,12 +190,12 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
     //</editor-fold>
 
     //<editor-fold desc="class TabCommand">
-    private class TabCommand {
+    private static class TabCommand {
 
-        private int indice;
-        private String text;
-        private String permission;
-        private ArrayList<String> textAvant;
+        private final int indice;
+        private final String text;
+        private final String permission;
+        private final ArrayList<String> textAvant;
 
         private TabCommand(int indice, String text, String permission, String... textAvant) {
             this.indice = indice;
@@ -268,23 +203,11 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
             this.permission = permission;
             if (textAvant == null || textAvant.length < 1) {
                 this.textAvant = null;
-            } else {
+            }else {
                 this.textAvant = Arrays.stream(textAvant).collect(ArrayList::new,
                         ArrayList::add,
                         ArrayList::addAll);
             }
-        }
-
-        private TabCommand(int indice, String text, String permission) {
-            this(indice, text, permission, "");
-        }
-
-        private TabCommand(int indice, String text, String[] textAvant) {
-            this(indice, text, null, textAvant);
-        }
-
-        private TabCommand(int indice, String text) {
-            this(indice, text, null, "");
         }
 
         //<editor-fold desc="get&set">

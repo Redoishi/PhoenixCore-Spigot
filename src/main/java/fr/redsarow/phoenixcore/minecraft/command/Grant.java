@@ -3,7 +3,6 @@ package fr.redsarow.phoenixcore.minecraft.command;
 import fr.redsarow.phoenixcore.PhoenixCore;
 import fr.redsarow.phoenixcore.minecraft.util.Color;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,13 +14,12 @@ import static fr.redsarow.phoenixcore.PhoenixCore.waitGranted;
  */
 public class Grant extends AMyCommand<PhoenixCore> {
 
-    public Grant(PhoenixCore phoenixCore, CommandMap commandMap) {
+    public Grant(PhoenixCore phoenixCore) {
         super(phoenixCore, "grant");
-        addDescription("");
-        addUsage("/grant <PlayerName>");
-        addAliases("g");
+        setUsage("/grant <PlayerName>");
+        setAliases("g");
 
-        registerCommand(commandMap);
+        registerCommand();
     }
 
     @Override

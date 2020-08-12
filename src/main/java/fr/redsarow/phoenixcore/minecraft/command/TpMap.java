@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,21 +18,21 @@ import java.io.IOException;
  * @author redsarow
  * @since 1.0
  */
-public class TpMap extends AMyCommand {
+public class TpMap extends AMyCommand<PhoenixCore> {
 
-    private SavePlayerWorldParam playerWorldParam;
-    private SavePlayerInformation savePlayerInformation;
+    private final SavePlayerWorldParam playerWorldParam;
+    private final SavePlayerInformation savePlayerInformation;
 
-    public TpMap(PhoenixCore phoenixCore, CommandMap commandMap, SavePlayerWorldParam playerWorldParam, SavePlayerInformation savePlayerInformation) {
+    public TpMap(PhoenixCore phoenixCore, SavePlayerWorldParam playerWorldParam, SavePlayerInformation savePlayerInformation) {
         super(phoenixCore, "tpMap");
         this.playerWorldParam = playerWorldParam;
         this.savePlayerInformation = savePlayerInformation;
-        addDescription("tp other map");
-        addUsage("/tpMap <WorldGroup>");
-        String tabComplete[] = WorldGroup.getListNameGroups().toArray(new String[0]);
+        setDescription("tp other map");
+        setUsage("/tpMap <WorldGroup>");
+        String[] tabComplete = WorldGroup.getListNameGroups().toArray(new String[0]);
 
-        addListTabbComplete(0, tabComplete);
-        registerCommand(commandMap);
+        addTabbComplete(0, tabComplete);
+        registerCommand();
     }
 
 

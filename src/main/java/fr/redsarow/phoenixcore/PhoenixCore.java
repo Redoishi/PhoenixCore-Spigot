@@ -6,19 +6,20 @@ import fr.redsarow.phoenixcore.minecraft.command.Grant;
 import fr.redsarow.phoenixcore.minecraft.command.RmGroup;
 import fr.redsarow.phoenixcore.minecraft.command.TpMap;
 import fr.redsarow.phoenixcore.minecraft.listener.*;
-import fr.redsarow.phoenixcore.minecraft.save.*;
+import fr.redsarow.phoenixcore.minecraft.save.SaveGrantedPlayer;
+import fr.redsarow.phoenixcore.minecraft.save.SavePlayerInformation;
+import fr.redsarow.phoenixcore.minecraft.save.SavePlayerWorldParam;
+import fr.redsarow.phoenixcore.minecraft.save.SaveWorlds;
 import fr.redsarow.phoenixcore.minecraft.save.config.Config;
 import fr.redsarow.phoenixcore.minecraft.save.config.GetConfig;
 import fr.redsarow.phoenixcore.minecraft.util.Color;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.*;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,14 +100,10 @@ public final class PhoenixCore extends JavaPlugin {
 
             //command
             getLogger().info(i18n.get("init.command"));
-            Field f = null;
-            f = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            f.setAccessible(true);
-            CommandMap commandMap = (CommandMap) f.get(Bukkit.getServer());
 
-            new TpMap(this, commandMap, playerWorldParam, savePlayerInformation);
-            new RmGroup(this, commandMap, SaveWorlds, playerWorldParam);
-            new Grant(this, commandMap);
+            new TpMap(this, playerWorldParam, savePlayerInformation);
+            new RmGroup(this, SaveWorlds, playerWorldParam);
+            new Grant(this);
 
             if (CONFIG.getBoolVal("discord")) {
                 getLogger().info(i18n.get("init.discord"));
