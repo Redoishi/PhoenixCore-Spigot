@@ -26,6 +26,7 @@ public class RmGroup extends AMyCommand<PhoenixCore> {
         setDescription("sup group");
         setUsage("/RmGroup <WorldGroup>");
         setAliases("rg");
+        setPermission("PhoenixCore.rmGroup");
 
         String[] tabComplete = WorldGroup.getListNameGroups().toArray(new String[0]);
         addTabbComplete(0, tabComplete);
