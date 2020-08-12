@@ -21,8 +21,7 @@ import java.util.Map;
 public class Death implements Listener {
 
     private final static Map<Player, WorldGroup> deathInGroup = new HashMap<>();
-
-    private Objective objectiveDeath;
+    private final Objective objectiveDeath;
     PhoenixCore pl;
 
     public Death(PhoenixCore phoenixCore, Objective objectiveDeath) {
@@ -31,27 +30,27 @@ public class Death implements Listener {
     }
 
     @EventHandler
-    public void onDeath(PlayerDeathEvent event){
+    public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         World world = player.getWorld();
         WorldGroup worldGroup = WorldGroup.findWorldGroupByWorldName(world.getName());
-        if(!worldGroup.isDeadCount()){
+        if (!worldGroup.isDeadCount()) {
 //            int increment = playerDeathCount.increment(player);
             Score score = objectiveDeath.getScore(player.getDisplayName());
-            score.setScore(score.getScore());
+            score.setScore(score.getScore() - 1);
+        }else {
+            pl.discordBot.getSendMessage().sendDeath(world.getName() + "\n" + event.getDeathMessage());
         }
 
-        pl.discordBot.getSendMessage().sendDeath(world.getName()+"\n"+event.getDeathMessage());
-
-        if(player.getBedSpawnLocation() == null){
+        if (player.getBedSpawnLocation() == null) {
             deathInGroup.put(player, worldGroup);
         }
     }
 
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent event){
+    public void onRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        if(deathInGroup.containsKey(player)){
+        if (deathInGroup.containsKey(player)) {
             event.setRespawnLocation(
                     pl.getServer().getWorld(
                             deathInGroup.get(player).getWorlds().iterator().next()

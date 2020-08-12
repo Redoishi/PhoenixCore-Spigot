@@ -16,12 +16,10 @@ import java.util.*;
  */
 public class Config {
 
+    private static final Map<String, FileConfiguration> listeFileConfiguration = new HashMap<>();
     private static File config;
     private static JavaPlugin plugin;
     private static FileConfiguration fileConfiguration;
-
-    private static Map<String, FileConfiguration> listeFileConfiguration = new HashMap<>();
-
 
     public static boolean checkConfig(JavaPlugin plugin, String name, String path) throws Exception {
         Config.plugin = plugin;
@@ -37,19 +35,19 @@ public class Config {
 
     private static boolean configFileExists(String name, String path) throws Exception {
         config = new File(path.equals("")
-                ?plugin.getDataFolder().toString()
-                :plugin.getDataFolder()+File.separator+path, name);
+                ? plugin.getDataFolder().toString()
+                : plugin.getDataFolder() + File.separator + path, name);
         if (!config.exists()) {
-            plugin.getLogger().info(name+" not found");
-            plugin.saveResource(path.equals("")?name:path+File.separator+name, true);
-        } else {
-            plugin.getLogger().info(name +" found");
+            plugin.getLogger().info(name + " not found");
+            plugin.saveResource(path.equals("") ? name : path + File.separator + name, true);
+        }else {
+            plugin.getLogger().info(name + " found");
             if (!checkConfigVers(name)) {
                 throw new Exception();
             }
         }
 
-        if(fileConfiguration == null){
+        if (fileConfiguration == null) {
             fileConfiguration = plugin.getConfig();
         }
         fileConfiguration.load(config);
@@ -63,17 +61,17 @@ public class Config {
         try {
             //rename config.yml
             fileConfiguration = plugin.getConfig();
-            if(fileConfiguration.getDouble("version") != PhoenixCore.VERS_CONFIG){
+            if (fileConfiguration.getDouble("version") != PhoenixCore.VERS_CONFIG) {
 
-                plugin.getLogger().info(name+" deprecated");
+                plugin.getLogger().info(name + " deprecated");
 
                 //get values ancient config
 //                Map<String, Object> values = fileConfiguration.getValues(true);
 
                 //File config = new File(this.plugin.getDataFolder()+File.separator+name);
-                File aConfig = new File(plugin.getDataFolder()+File.separator+name.replace(".yml", "")+fileConfiguration.get("version")+".yml");
+                File aConfig = new File(plugin.getDataFolder() + File.separator + name.replace(".yml", "") + fileConfiguration.get("version") + ".yml");
 
-                if(!config.renameTo(aConfig)){
+                if (!config.renameTo(aConfig)) {
                     return false;
                 }
                 plugin.saveDefaultConfig();
@@ -86,7 +84,7 @@ public class Config {
                 List<String> lines = Files.readAllLines(config.toPath(), StandardCharsets.UTF_8);
 
                 Param param = new Param(new Scanner(aConfig), -1, lines);
-                StringBuilder stringBuilder = new StringBuilder("");
+                StringBuilder stringBuilder = new StringBuilder();
 
                 modif(param, null, stringBuilder);
 
@@ -100,23 +98,20 @@ public class Config {
         return false;
     }
 
-    private static void modif(Param param, Set<String> keys, StringBuilder path){
+    private static void modif(Param param, Set<String> keys, StringBuilder path) {
 
-        if(param.scanner.hasNextLine()) {
+        if (param.scanner.hasNextLine()) {
             //skip comment, version and void (ancient)
             String ligne = param.scanner.nextLine();
 
             param.nbLinge++;
 
             //if list
-            if(ligne.matches("^ *-.*")){
-                if(param.nbLinge<param.lines.size() && param.lines.get(param.nbLinge).matches("^ *-.*")){
+            if (ligne.matches("^ *-.*")) {
+                if (param.nbLinge < param.lines.size() && param.lines.get(param.nbLinge).matches("^ *-.*")) {
                     param.lines.remove(param.nbLinge);
-                    param.lines.add(param.nbLinge, ligne);
-                }else{
-                    //decal auto
-                    param.lines.add(param.nbLinge, ligne);
                 }
+                param.lines.add(param.nbLinge, ligne);
 
             }else if (!(ligne.startsWith("#") || ligne.startsWith("version") || ligne.matches("^ *$"))) {
 
@@ -130,19 +125,19 @@ public class Config {
                             param.lines.remove(param.nbLinge);
                             param.lines.add(param.nbLinge, ligne);
                         }
-                    } else {
+                    }else {
                         //si val dif alor replace
-                        if (!aConfigValue[1].equalsIgnoreCase(fileConfiguration.getString(path+"."+aConfigValue[0]))) {
+                        if (!aConfigValue[1].equalsIgnoreCase(fileConfiguration.getString(path + "." + aConfigValue[0]))) {
                             param.lines.remove(param.nbLinge);
                             param.lines.add(param.nbLinge, ligne);
                         }
                         keys.remove(aConfigValue[0]);
-                        if(keys.isEmpty()){
+                        if (keys.isEmpty()) {
                             return;
                         }
                     }
 
-                } else if (aConfigValue.length == 1) {
+                }else if (aConfigValue.length == 1) {
 
 
                     String key = path.toString().equals("")
@@ -161,7 +156,6 @@ public class Config {
             }
             modif(param, keys, path);
         }
-        return;
     }
 
     public static File getConfig() {
@@ -176,7 +170,7 @@ public class Config {
         return listeFileConfiguration;
     }
 
-    private static class Param{
+    private static class Param {
         Scanner scanner;
         int nbLinge;
         List<String> lines;

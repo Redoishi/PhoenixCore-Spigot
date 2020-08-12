@@ -22,8 +22,8 @@ import java.util.UUID;
  */
 public class Join implements Listener {
 
+    private final SaveGrantedPlayer grantedPlayer;
     PhoenixCore pl;
-    private SaveGrantedPlayer grantedPlayer;
 
     public Join(PhoenixCore phoenixCore, SaveGrantedPlayer grantedPlayer) {
         this.pl = phoenixCore;

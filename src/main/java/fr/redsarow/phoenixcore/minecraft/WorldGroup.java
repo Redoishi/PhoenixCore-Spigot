@@ -14,16 +14,16 @@ public class WorldGroup {
 
     public final static List<WorldGroup> GROUPS = new ArrayList<>();
 
-    private String name;
+    private final String name;
+    private final Map<String, Team> worlds;
     private Team team;
-    private Map<String, Team> worlds;
     private boolean scoreboard;
     private boolean deadCount;
     private GameMode gameMode;
 
     public WorldGroup(String name) {
         this.name = name;
-        worlds= new HashMap<>();
+        worlds = new HashMap<>();
         scoreboard = false;
         deadCount = false;
         GROUPS.add(this);
@@ -32,7 +32,7 @@ public class WorldGroup {
     /**
      * @return group or null
      */
-    public static WorldGroup findWorldGroupByWorldName(String worldName){
+    public static WorldGroup findWorldGroupByWorldName(String worldName) {
         for (WorldGroup group : GROUPS) {
             if (group.getWorlds().contains(worldName)) {
                 return group;
@@ -44,7 +44,7 @@ public class WorldGroup {
     /**
      * @return group or null
      */
-    public static WorldGroup findWorldGroupByName(String worldGroupName){
+    public static WorldGroup findWorldGroupByName(String worldGroupName) {
         for (WorldGroup group : GROUPS) {
             if (group.getName().equalsIgnoreCase(worldGroupName)) {
                 return group;
@@ -56,42 +56,20 @@ public class WorldGroup {
     /**
      * @return list of group name
      */
-    public static List<String> getListNameGroups(){
+    public static List<String> getListNameGroups() {
         return GROUPS.stream().map(WorldGroup::getName).collect(Collectors.toList());
-    }
-
-    //<editor-fold desc="set">
-    public void setTeam(Team team) {
-        this.team = team;
     }
 
     public void setWorldTeam(String worldName, Team team) {
         this.worlds.put(worldName, team);
     }
 
-    public void setScoreboard(boolean scoreboard) {
-        this.scoreboard = scoreboard;
-    }
-
-    public void setDeadCount(boolean deadCount) {
-        this.deadCount = deadCount;
-    }
-
-    public void setGameMode(GameMode gameMode) {
-        this.gameMode = gameMode;
-    }
-
-    public void setGameMode(String gameMode) {
-        this.gameMode = GameMode.valueOf(gameMode==null?GameMode.SURVIVAL.name():gameMode);
-    }
-
-    //</editor-fold>
-
     //<editor-fold desc="get">
-    public Team getTeamForWorld(String worldName){
+    public Team getTeamForWorld(String worldName) {
         Team team = worlds.get(worldName);
-        return team == null? this.team : team;
+        return team == null ? this.team : team;
     }
+
     public Set<String> getWorlds() {
         return worlds.keySet();
     }
@@ -108,6 +86,13 @@ public class WorldGroup {
         return team;
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="set">
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
     public Map<String, Team> getWorldsMap() {
         return worlds;
     }
@@ -116,12 +101,28 @@ public class WorldGroup {
         return scoreboard;
     }
 
+    public void setScoreboard(boolean scoreboard) {
+        this.scoreboard = scoreboard;
+    }
+
     public boolean isDeadCount() {
         return deadCount;
     }
 
+    public void setDeadCount(boolean deadCount) {
+        this.deadCount = deadCount;
+    }
+
     public GameMode getGameMode() {
         return gameMode;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public void setGameMode(String gameMode) {
+        this.gameMode = GameMode.valueOf(gameMode == null ? GameMode.SURVIVAL.name() : gameMode);
     }
 
     //</editor-fold>

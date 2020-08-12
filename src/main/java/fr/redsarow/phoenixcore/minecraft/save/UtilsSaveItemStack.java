@@ -23,8 +23,8 @@ public class UtilsSaveItemStack {
 
             dataOutput.writeInt(itemStacks.length);
 
-            for (int i = 0; i < itemStacks.length; i++) {
-                dataOutput.writeObject(itemStacks[i]);
+            for (ItemStack itemStack : itemStacks) {
+                dataOutput.writeObject(itemStack);
             }
 
             dataOutput.close();
@@ -35,7 +35,7 @@ public class UtilsSaveItemStack {
     }
 
     public static ItemStack[] toObject(String data) throws IOException {
-        if(data==null){
+        if (data == null) {
             return new ItemStack[0];
         }
         try {

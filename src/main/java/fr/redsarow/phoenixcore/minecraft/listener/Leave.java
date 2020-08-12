@@ -20,10 +20,10 @@ public class Leave implements Listener {
     }
 
     @EventHandler
-    public void onLeave(PlayerQuitEvent event){
+    public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Team team = pl.DEFAULT_PLUGIN_SCOREBOARD.getTeam(player.getWorld().getName());
-        if(team!=null){
+        if (team != null) {
             team.removeEntry(player.getName());
         }
     }

@@ -111,14 +111,14 @@ public class SaveWorlds {
         WorldGroup worldGroup = new WorldGroup(group);
         if (configFile.get(group + "." + DEFAULT_TEAM) != null) {
             Team team = pl.DEFAULT_PLUGIN_SCOREBOARD.getTeam(group);
-            if(team == null){
+            if (team == null) {
                 team = pl.DEFAULT_PLUGIN_SCOREBOARD.registerNewTeam(group);
             }
 
             ChatColor chatColor = ChatColor.valueOf(configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_COLOR));
 //            pl.getLogger().info(chatColor.getClass() + "");
 //            pl.getLogger().info(chatColor + "");
-            team.setColor(chatColor);//TODO bug color
+            team.setColor(chatColor);
 
             team.setPrefix(chatColor + configFile.getString(group + "." + DEFAULT_TEAM + "." + TEAM_PREFIX, ""));
             team.setSuffix("" + ChatColor.RESET);
@@ -141,7 +141,7 @@ public class SaveWorlds {
             Team team = null;
             if (configFile.get(group + "." + TEAM + "." + s) != null) {
                 team = pl.DEFAULT_PLUGIN_SCOREBOARD.getTeam(s);
-                if(team == null){
+                if (team == null) {
                     team = pl.DEFAULT_PLUGIN_SCOREBOARD.registerNewTeam(s);
                 }
 

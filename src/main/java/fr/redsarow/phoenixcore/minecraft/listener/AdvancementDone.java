@@ -12,10 +12,9 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
  */
 public class AdvancementDone implements Listener {
 
-    private PhoenixCore pl;
+    private final PhoenixCore pl;
 
     public AdvancementDone(PhoenixCore pl) {
-
         this.pl = pl;
     }
 
@@ -26,6 +25,7 @@ public class AdvancementDone implements Listener {
         if (nomInterne.startsWith("recipes")) {
             return;
         }
-        pl.discordBot.getSendMessage().sendAdvancement(event.getPlayer().getDisplayName() + ": "+ event.getPlayer().getWorld().getName() + ": " + nomInterne);
+        pl.discordBot.getSendMessage()
+                .sendAdvancement(event.getPlayer().getDisplayName() + ": " + event.getPlayer().getWorld().getName() + ": " + nomInterne);
     }
 }

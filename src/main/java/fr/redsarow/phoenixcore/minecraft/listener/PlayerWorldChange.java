@@ -22,27 +22,27 @@ public class PlayerWorldChange implements Listener {
     }
 
     @EventHandler
-    public void worldChange(PlayerChangedWorldEvent event){
+    public void worldChange(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
 
         String worldName = player.getWorld().getName();
         WorldGroup group = WorldGroup.findWorldGroupByWorldName(worldName);
         if (group == null) {
-            player.sendMessage(Color.ERROR+PhoenixCore.getI18n().get("error"));
+            player.sendMessage(Color.ERROR + PhoenixCore.getI18n().get("error"));
             return;
         }
         Team team = group.getTeamForWorld(worldName);
-        if(team != null){
+        if (team != null) {
             team.addEntry(player.getName());
-        }else{
+        }else {
             Team lastTeam = pl.DEFAULT_PLUGIN_SCOREBOARD.getTeam(player.getWorld().getName());
-            if(lastTeam!=null){
+            if (lastTeam != null) {
                 lastTeam.removeEntry(player.getName());
             }
         }
-        if(group.isScoreboard()){
+        if (group.isScoreboard()) {
             player.setScoreboard(pl.DEFAULT_PLUGIN_SCOREBOARD);
-        }else{
+        }else {
             player.setScoreboard(pl.getServer().getScoreboardManager().getMainScoreboard());
         }
     }

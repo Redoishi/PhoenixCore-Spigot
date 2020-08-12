@@ -19,19 +19,19 @@ public class GetConfig {
         this.conf = this.plugin.getConfig();
     }
 
-    public Object getVal(String path){
+    public Object getVal(String path) {
         return conf.get(path);
     }
 
-    public String getStringVal(String path){
+    public String getStringVal(String path) {
         return conf.getString(path);
     }
 
-    public List<String> getStringListVal(String path){
+    public List<String> getStringListVal(String path) {
         return conf.getStringList(path);
     }
 
-    public Boolean getBoolVal(String path){
+    public Boolean getBoolVal(String path) {
         return conf.getBoolean(path);
     }
 }

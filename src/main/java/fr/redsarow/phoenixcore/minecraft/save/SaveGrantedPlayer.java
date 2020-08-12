@@ -46,7 +46,7 @@ public class SaveGrantedPlayer {
         granted = configFile.getKeys(false).stream().map(UUID::fromString).collect(Collectors.toList());
     }
 
-    public List<UUID> getGranted(){
+    public List<UUID> getGranted() {
         return granted;
     }
 
@@ -64,9 +64,9 @@ public class SaveGrantedPlayer {
             pl.getServer().getScheduler().scheduleSyncDelayedTask(pl, () -> {
                 WorldGroup worldGroup = WorldGroup.findWorldGroupByWorldName(player.getWorld().getName());
                 GameMode gameMode = worldGroup.getGameMode();
-                if(gameMode!= null){
+                if (gameMode != null) {
                     player.setGameMode(gameMode);
-                }else{
+                }else {
                     player.setGameMode(GameMode.SURVIVAL);
                 }
             });
@@ -76,7 +76,7 @@ public class SaveGrantedPlayer {
         configFile = YamlConfiguration.loadConfiguration(file);
     }
 
-    public boolean isGranted(UUID uuid){
+    public boolean isGranted(UUID uuid) {
         return granted.contains(uuid);
     }
 }

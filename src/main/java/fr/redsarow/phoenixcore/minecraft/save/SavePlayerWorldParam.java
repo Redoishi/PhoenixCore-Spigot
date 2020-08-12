@@ -14,15 +14,12 @@ import java.io.IOException;
 import java.util.Set;
 
 import static fr.redsarow.phoenixcore.minecraft.save.Save.*;
-import static fr.redsarow.phoenixcore.minecraft.save.Save.setSectionVal;
 
 /**
  * @author redsarow
  * @since 1.0
  */
 public class SavePlayerWorldParam {
-
-    private static String FILE = "PlayerWorldParam.yml";
 
     private final static String WORLD = "world";
     private final static String X = "x";
@@ -33,7 +30,7 @@ public class SavePlayerWorldParam {
     private final static String FOOD = "food";
     private final static String XP = "xp";
     private final static String SPAWN = "spawn";
-
+    private static String FILE = "PlayerWorldParam.yml";
     private File dataFolder;
     private Plugin pl;
     private File file;
@@ -95,9 +92,9 @@ public class SavePlayerWorldParam {
 
         //save spawn
         Location bedSpawnLocation = player.getBedSpawnLocation();
-        pl.getLogger().info("Save bedSpawnLocation == null : "+ (bedSpawnLocation==null));
-        if(bedSpawnLocation!=null){
-            pl.getLogger().info("Save "+bedSpawnLocation.toString());
+        pl.getLogger().info("Save bedSpawnLocation == null : " + (bedSpawnLocation == null));
+        if (bedSpawnLocation != null) {
+            pl.getLogger().info("Save " + bedSpawnLocation.toString());
         }
         if (bedSpawnLocation != null) {
             setSection(configFile, pathLastWorldGroup + "." + SPAWN);
@@ -157,7 +154,7 @@ public class SavePlayerWorldParam {
     public Location getLastBedSpawnLocation(Player player, String worldGroupName) {
         String pathConfig = getDefaultPathConfig(player, worldGroupName);
 
-        if(configFile.getString(pathConfig + "." + SPAWN)==null){
+        if (configFile.getString(pathConfig + "." + SPAWN) == null) {
             return null;
         }
 
@@ -186,7 +183,7 @@ public class SavePlayerWorldParam {
     public void rmGroup(String targetWorldGroup) {
         Set<String> player = configFile.getKeys(false);
         player.forEach(s -> {
-            setSectionVal(configFile, s+"."+targetWorldGroup, null);
+            setSectionVal(configFile, s + "." + targetWorldGroup, null);
         });
         try {
             configFile.save(file);

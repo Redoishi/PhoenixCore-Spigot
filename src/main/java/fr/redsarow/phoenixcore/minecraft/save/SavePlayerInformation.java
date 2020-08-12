@@ -61,7 +61,7 @@ public class SavePlayerInformation {
         File fileTargetWG = testFolder(targetWorldGroupeName);
 
         dataOk = move("data", data, fileOriginWG, fileTargetWG, uuid.toString() + ".dat");
-        if(!dataOk)
+        if (!dataOk)
             return false;
 
 //        data = new File(world + File.separator + "advancements", uuid.toString() + ".json");
