@@ -109,7 +109,7 @@ public abstract class AMyCommand<T extends JavaPlugin> extends Command implement
      */
     protected boolean registerCommand() {
         if (!register) {
-            register = commandMap.register(plugin.getName(), this);// TODO Test
+            register = commandMap.register(plugin.getName(), this);
         }
         return register;
     }
