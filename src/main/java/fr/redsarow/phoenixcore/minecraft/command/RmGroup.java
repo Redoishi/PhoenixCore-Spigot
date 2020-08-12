@@ -16,8 +16,8 @@ import org.bukkit.entity.Player;
  */
 public class RmGroup extends AMyCommand<PhoenixCore> {
 
-    private SaveWorlds saveWorlds;
-    private SavePlayerWorldParam playerWorldParam;
+    private final SaveWorlds saveWorlds;
+    private final SavePlayerWorldParam playerWorldParam;
 
     public RmGroup(PhoenixCore phoenixCore, SaveWorlds saveWorlds, SavePlayerWorldParam playerWorldParam) {
         super(phoenixCore, "RmGroup");
@@ -27,7 +27,7 @@ public class RmGroup extends AMyCommand<PhoenixCore> {
         setUsage("/RmGroup <WorldGroup>");
         setAliases("rg");
 
-        String tabComplete[] = WorldGroup.getListNameGroups().toArray(new String[0]);
+        String[] tabComplete = WorldGroup.getListNameGroups().toArray(new String[0]);
         addTabbComplete(0, tabComplete);
 
         registerCommand();
